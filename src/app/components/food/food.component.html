@@ -1,0 +1,8 @@
+<div class="container">
+    <h2>Dodaj posiłek</h2>
+    <input [(ngModel)]="newFood.name" placeholder="Nazwa">
+    <input [(ngModel)]="newFood.weight" type="number" placeholder="Waga (g)">
+    <input [(ngModel)]="newFood.calories" type="number" placeholder="Kalorie">
+    <button mat-button color="primary" (click)="addFood()">Dodaj</button>
+  </div>
+  

@@ -1,0 +1,7 @@
+<div *ngIf="isLoading">Ładowanie danych...</div>
+<div *ngIf="errorMessage">{{ errorMessage }}</div>
+
+<mat-card *ngFor="let diary of diaries">
+  <mat-card-title>{{ diary.name }}</mat-card-title>
+  <mat-card-subtitle>Type: {{ diary.type }}</mat-card-subtitle>
+</mat-card>
