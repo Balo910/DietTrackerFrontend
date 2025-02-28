@@ -1,12 +1,25 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { DiaryService } from './services/diary.service';
+import { Diary } from './models/diary.model';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'blog';
+  diaries: Diary[] = [];
+
+  constructor(private diaryService: DiaryService) {}
+
+  loadDiaries(): void {
+    this.diaryService.getDiaries().subscribe({
+      next: (data: Diary[]) => {
+        this.diaries = data;
+      },
+      error: (err) => {
+        console.error('Błąd pobierania dzienników:', err);
+      }
+    });
+  }
 }
