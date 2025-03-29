@@ -1,1 +1,20 @@
-<p>food works!</p>
+<div class="food-container">
+  <h2>Food List</h2>
+  <input type="text" [(ngModel)]="searchTerm" placeholder="Search by name or tag" (input)="searchFood()">
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Calories</th>
+        <th>Tags</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let food of foods">
+        <td>{{ food.name }}</td>
+        <td>{{ food.calories }}</td>
+        <td>{{ food.tags.join(', ') }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

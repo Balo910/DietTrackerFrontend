@@ -1,5 +1,9 @@
+import { Food } from './food.model';
+import { Fluid } from './fluid.model';
+
 export interface Diary {
-    id: number;
-    name: string;
-    type: string;
-  }
+  id: number;
+  date: string;
+  foods: Food[];
+  fluids: Fluid[];
+}

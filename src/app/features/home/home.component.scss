@@ -1,0 +1,31 @@
+.home-container {
+  padding: 20px;
+  text-align: center;
+
+  h1 {
+    color: #333;
+  }
+
+  p {
+    color: #555;
+  }
+
+  .quick-links {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+
+    .link {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+  }
+}

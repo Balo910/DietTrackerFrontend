@@ -1,12 +1,11 @@
-import { NgModule } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-
-
-@NgModule({
-  declarations: [],
-  imports: [
-    CommonModule
-  ]
+@Component({
+  selector: 'app-navbar',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './navbar.component.html',
+  styleUrls: ['./navbar.component.scss']
 })
-export class CoreModule { }
+export class NavbarComponent {}

@@ -1,28 +1,15 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http'; 
-import { AppComponent } from './app.component';
-import { AppRoutingModule } from './app-routing.module'; 
+import { Component } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { CommonModule } from '@angular/common';
 
-import { HomeComponent } from './features/home/home.component';
-import { DiaryComponent } from './features/diary/diary.component';
-import { FoodComponent } from './features/food/food.component';
-import { FluidComponent } from './features/fluid/fluid.component';
-
-@NgModule({
-  declarations: [
-    AppComponent,
-    HomeComponent,
-    DiaryComponent,
-    FoodComponent,
-    FluidComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule 
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [CommonModule, MatCardModule, MatButtonModule],
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
 })
-export class AppModule { }
+export class AppComponent {
+  title = 'Moja Aplikacja';
+}

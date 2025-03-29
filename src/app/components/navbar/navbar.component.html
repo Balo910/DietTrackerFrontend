@@ -1,13 +1,7 @@
-<mat-toolbar color="primary">
-    <span>DietTracker</span>
-    <span class="spacer"></span>
-    <a mat-button routerLink="/">Home</a>
-    <a mat-button routerLink="/diary">Diary</a>
-    <a mat-button routerLink="/food">Food</a>
-    <a mat-button routerLink="/fluid">Fluids</a>
-  </mat-toolbar>
-
-  <app-navbar></app-navbar>
-<div class="content">
-  <router-outlet></router-outlet>
-</div>
+<nav class="navbar">
+  <a routerLink="/">Home</a>
+  <a routerLink="/food">Food</a>
+  <a routerLink="/fluid">Fluid</a>
+  <a routerLink="/diary">Diary</a>
+  <a routerLink="/tags">Tags</a>
+</nav>

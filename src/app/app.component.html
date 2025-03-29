@@ -1,16 +1,9 @@
-<div class="container">
-    <h1>📖 Moja Aplikacja Dziennika</h1>
-    <button (click)="loadDiaries()">Załaduj dzienniki</button>
-  
-    <div *ngIf="diaries.length > 0">
-      <h2>Lista dzienników:</h2>
-      <ul>
-        <li *ngFor="let diary of diaries">
-          <strong>{{ diary.name }}</strong> - {{ diary.type }}
-        </li>
-      </ul>
-    </div>
-  
-    <p *ngIf="diaries.length === 0">Brak danych. Kliknij przycisk, aby załadować dzienniki.</p>
+<div class="home-container">
+  <h1>{{ title }}</h1>
+  <p>Śledź swoje posiłki i płyny.</p>
+  <div class="buttons">
+    <button routerLink="/diary">Dziennik</button>
+    <button routerLink="/fluid">Płyny</button>
+    <button routerLink="/food">Żywność</button>
   </div>
-  
+</div>

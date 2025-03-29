@@ -1,8 +1,15 @@
-<div class="container">
-    <h2>Dodaj posiłek</h2>
-    <input [(ngModel)]="newFood.name" placeholder="Nazwa">
-    <input [(ngModel)]="newFood.weight" type="number" placeholder="Waga (g)">
-    <input [(ngModel)]="newFood.calories" type="number" placeholder="Kalorie">
-    <button mat-button color="primary" (click)="addFood()">Dodaj</button>
-  </div>
-  
+<div *ngIf="isLoading" class="loading-message">Ładowanie...</div>
+<div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+<div *ngIf="!isLoading && !errorMessage && foodItems.length === 0" class="no-data-message">
+  Brak danych do wyświetlenia.
+</div>
+
+<mat-card *ngFor="let food of foodItems" class="food-entry">
+  <mat-card-title>{{ food.name }}</mat-card-title>
+  <mat-card-content>
+    <p>Kalorie: {{ food.calories }} kcal</p>
+    <p>Białko: {{ food.protein }} g</p>
+    <p>Tłuszcz: {{ food.fat }} g</p>
+    <p>Węglowodany: {{ food.carbs }} g</p>
+  </mat-card-content>
+</mat-card>

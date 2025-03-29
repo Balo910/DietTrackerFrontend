@@ -1,7 +1,9 @@
-<div *ngIf="isLoading">Ładowanie danych...</div>
-<div *ngIf="errorMessage">{{ errorMessage }}</div>
-
-<mat-card *ngFor="let diary of diaries">
-  <mat-card-title>{{ diary.name }}</mat-card-title>
-  <mat-card-subtitle>Type: {{ diary.type }}</mat-card-subtitle>
-</mat-card>
+<div class="diary-container">
+  <h2>Diary</h2>
+  <input type="date" [(ngModel)]="selectedDate" (change)="onDateChange()">
+  <div *ngFor="let diary of diaries" class="diary-entry">
+    <h3>{{ diary.date }}</h3>
+    <p>Foods: {{ diary.foods.length }}</p>
+    <p>Fluids: {{ diary.fluids.length }}</p>
+  </div>
+</div>

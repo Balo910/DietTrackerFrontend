@@ -1,19 +1,36 @@
-import { Component } from '@angular/core';
-import { ApiService } from '../../services/api.service';
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FoodService } from '../../services/food.service';
+import { FoodEntry } from '../../models/food.model';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-food',
+  standalone: true,
+  imports: [CommonModule, MatCardModule],
   templateUrl: './food.component.html',
-  styleUrls: ['./food.component.css']
+  styleUrls: ['./food.component.scss']
 })
-export class FoodComponent {
-  newFood = { name: '', weight: 100, calories: 200 };
+export class FoodComponent implements OnInit {
+  private foodService = inject(FoodService);
+  foodItems: FoodEntry[] = []; // Zmienione foodEntries -> foodItems
+  isLoading = true;
+  errorMessage: string | null = null;
 
-  constructor(private apiService: ApiService) {}
+  ngOnInit(): void {
+    this.fetchFoods();
+  }
 
-  addFood() {
-    this.apiService.addFood(this.newFood).subscribe(() => {
-      alert('Dodano jedzenie!');
+  fetchFoods(): void {
+    this.foodService.getFoods().subscribe({
+      next: (items) => {
+        this.foodItems = items; 
+        this.isLoading = false;
+      },
+      error: () => {
+        this.errorMessage = 'Błąd ładowania żywności!';
+        this.isLoading = false;
+      }
     });
   }
 }
