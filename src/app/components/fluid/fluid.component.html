@@ -1,10 +1,17 @@
-<div *ngIf="isLoading">Ładowanie...</div>
-<div *ngIf="errorMessage">{{ errorMessage }}</div>
+<div class="fluid-container">
+  <h2>Twoje płyny</h2>
 
-<mat-card *ngFor="let entry of fluidEntries">
-  <mat-card-title>{{ entry.drinkType }}</mat-card-title>
-  <mat-card-subtitle>{{ entry.date }}</mat-card-subtitle>
-  <mat-card-content>
-    <p>{{ entry.amount }} ml</p>
-  </mat-card-content>
-</mat-card>
+  <div *ngIf="isLoading" class="loading-message">Ładowanie...</div>
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+  <div *ngIf="!isLoading && !errorMessage && fluidEntries.length === 0" class="no-data-message">
+    Brak danych do wyświetlenia.
+  </div>
+
+  <div *ngFor="let entry of fluidEntries" class="entry">
+    <h3>{{ entry.name }}</h3>
+    <p>Ilość: {{ entry.amount }} ml</p>
+    <p>Data: {{ entry.date | date:'shortDate' }}</p>
+  </div>
+
+  <button class="back-button" routerLink="/">Powrót</button>
+</div>

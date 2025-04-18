@@ -1,15 +1,26 @@
-<div *ngIf="isLoading" class="loading-message">Ładowanie...</div>
-<div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-<div *ngIf="!isLoading && !errorMessage && foodItems.length === 0" class="no-data-message">
-  Brak danych do wyświetlenia.
-</div>
+<h1>DietTracker</h1>
+<div class="food-container">
+  <h2>Twoja żywność</h2>
 
-<mat-card *ngFor="let food of foodItems" class="food-entry">
-  <mat-card-title>{{ food.name }}</mat-card-title>
-  <mat-card-content>
+  <div *ngIf="isLoading" class="loading-message">Ładowanie...</div>
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+  
+  <button (click)="addFood({
+    name: 'Bułka', weight: 200, calories: 200, proteins: 10, fats: 12
+
+
+  })">Dodaj nowy produkt</button>
+
+  <div *ngIf="!isLoading && !errorMessage && foodItems.length === 0" class="no-data-message">
+    Brak danych do wyświetlenia.
+  </div>
+
+  <div *ngFor="let food of foodItems" class="entry">
+    <h3>{{ food.name }}</h3>
     <p>Kalorie: {{ food.calories }} kcal</p>
     <p>Białko: {{ food.protein }} g</p>
     <p>Tłuszcz: {{ food.fat }} g</p>
     <p>Węglowodany: {{ food.carbs }} g</p>
-  </mat-card-content>
-</mat-card>
+    <p>Data: {{ food.date | date:'shortDate' }}</p>
+  </div>
+</div>

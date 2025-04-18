@@ -1,9 +1,39 @@
 <div class="diary-container">
-  <h2>Diary</h2>
-  <input type="date" [(ngModel)]="selectedDate" (change)="onDateChange()">
-  <div *ngFor="let diary of diaries" class="diary-entry">
-    <h3>{{ diary.date }}</h3>
-    <p>Foods: {{ diary.foods.length }}</p>
-    <p>Fluids: {{ diary.fluids.length }}</p>
+  <h2>Dziennik żywieniowy - {{ currentDate | date:'dd.MM.yyyy' }}</h2>
+  
+  <div class="date-controls">
+    <button (click)="changeDate(-1)">← Poprzedni</button>
+    <input type="date" [(ngModel)]="currentDate" (change)="loadDiaries()">
+    <button (click)="changeDate(1)">Następny →</button>
   </div>
+
+  @if (isLoading) {
+    <div class="loading">Ładowanie...</div>
+  } @else if (errorMessage) {
+    <div class="error">{{ errorMessage }}</div>
+  } @else if (diaries.length === 0) {
+    <div class="empty">Brak wpisów na ten dzień</div>
+  }
+
+  @for (meal of diaries; track meal.id) {
+    <div class="meal-card">
+      <h3>{{ meal.mealType }}</h3>
+      
+      @for (food of meal.foods; track food.id) {
+        <div class="food-item">
+          <span>{{ food.name }}</span>
+          <span>{{ food.calories }} kcal</span>
+          <button (click)="removeFood(meal.id, food.id)">×</button>
+        </div>
+      }
+
+      <div class="add-food-form">
+        <input [(ngModel)]="newFoodName" placeholder="Nazwa">
+        <input type="number" [(ngModel)]="newFoodCalories" placeholder="Kalorie">
+        <button (click)="addFoodToMeal(meal.id)">Dodaj</button>
+      </div>
+    </div>
+  }
+
+  <button class="back-btn" routerLink="/">Powrót</button>
 </div>

@@ -1,14 +1,15 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, RouterLink } from '@angular/router'; 
-import { NavbarComponent } from './components/navbar/navbar.component';
+import { RouterModule, Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule],
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  imports: [CommonModule, RouterModule],
+  template: `
+    <router-outlet></router-outlet>
+  `,
+  styles: []
 })
 export class AppComponent {
   title = 'DietTracker';
