@@ -1,22 +1,21 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { FoodEditDialogComponent } from './food-edit-dialog.component';
-import { Food } from '../../models/food.model';
+import { FoodEditDialogComponent } from './dialog-food/food-edit-dialog.component';
+import { FoodService } from './food.service';
 
 @Component({
   selector: 'app-food',
+  standalone: true,
   imports: [CommonModule, RouterModule, FormsModule, DatePipe, MatDialogModule],
   templateUrl: './food.component.html',
   styleUrls: ['./food.component.scss']
 })
 export class FoodComponent {
-  private http = inject(HttpClient);
+  private foodService = inject(FoodService);
   private dialog = inject(MatDialog);
-  private apiUrl = 'http://localhost:8080/api';
 
   foodItems: any[] = [];
   isLoading = false;
@@ -28,7 +27,7 @@ export class FoodComponent {
 
   loadFoods() {
     this.isLoading = true;
-    this.http.get<any[]>(`${this.apiUrl}/food`).subscribe({
+    this.foodService.getFoods().subscribe({
       next: (data) => {
         this.foodItems = data;
         this.isLoading = false;
@@ -45,8 +44,8 @@ export class FoodComponent {
       data: food || { 
         name: '', 
         calories: 0, 
-        protein: 0, 
-        fat: 0, 
+        proteins: 0, 
+        fats: 0, 
         carbs: 0,
         date: new Date().toISOString()
       },
@@ -64,15 +63,15 @@ export class FoodComponent {
     });
   }
 
-  addFood(food: Food) {
-    this.http.post(`${this.apiUrl}/food`, food).subscribe({
+  addFood(food: any) {
+    this.foodService.addFood(food).subscribe({
       next: () => this.loadFoods(),
       error: (err) => this.errorMessage = 'Błąd dodawania produktu'
     });
   }
 
   updateFood(food: any) {
-    this.http.put(`${this.apiUrl}/food/${food.id}`, food).subscribe({
+    this.foodService.updateFood(food).subscribe({
       next: () => this.loadFoods(),
       error: (err) => this.errorMessage = 'Błąd aktualizacji produktu'
     });
@@ -80,7 +79,7 @@ export class FoodComponent {
 
   deleteFood(id: number) {
     if (confirm('Czy na pewno chcesz usunąć ten produkt?')) {
-      this.http.delete(`${this.apiUrl}/food/${id}`).subscribe({
+      this.foodService.deleteFood(id).subscribe({
         next: () => this.loadFoods(),
         error: (err) => this.errorMessage = 'Błąd usuwania produktu'
       });

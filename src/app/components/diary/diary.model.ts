@@ -1,5 +1,5 @@
-import { Food } from './food.model';
-import { Fluid } from './fluid.model';
+import { Food } from '../food/food.model';
+import { Fluid } from '../fluid/fluid.model';
 
 export interface Diary {
   id: number;

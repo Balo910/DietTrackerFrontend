@@ -1,0 +1,27 @@
+
+.form-group {
+      margin-bottom: 1rem;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.5rem;
+    }
+    .nutrition-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .btn-save {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .btn-cancel {
+      background-color: #f44336;
+      color: white;
+    }

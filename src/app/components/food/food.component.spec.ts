@@ -3,7 +3,7 @@ import { FoodComponent } from './food.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { FoodService } from '../../services/food.service';
+import { FoodService } from './food.service';
 import { of } from 'rxjs';
 
 describe('FoodComponent', () => {
@@ -30,7 +30,7 @@ describe('FoodComponent', () => {
   });
 
   it('should load food entries on init', () => {
-    const mockFoods = [{ id: 1, name: 'Kurczak', calories: 200, protein: 30, fat: 5, carbs: 2 }];
+    const mockFoods = [{ id: 1, name: 'Kurczak', calories: 200, proteins: 30, fats: 5, carbs: 2 }];
     foodService.getFoods.and.returnValue(of(mockFoods));
   
     component.ngOnInit();

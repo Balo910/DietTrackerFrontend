@@ -1,0 +1,30 @@
+<mat-dialog-content>
+
+<h2>{{ data.id ? 'Edytuj' : 'Dodaj' }} produkt</h2>
+<div class="form-group">
+  <label>Nazwa:</label>
+  <input [(ngModel)]="data.name" class="form-control">
+</div>
+<div class="nutrition-grid">
+  <div class="form-group">
+    <label>Kalorie:</label>
+    <input type="number" [(ngModel)]="data.calories" class="form-control">
+  </div>
+  <div class="form-group">
+    <label>Białko (g):</label>
+    <input type="number" [(ngModel)]="data.proteins" class="form-control">
+  </div>
+  <div class="form-group">
+    <label>Tłuszcz (g):</label>
+    <input type="number" [(ngModel)]="data.fats" class="form-control">
+  </div>
+  <div class="form-group">
+    <label>Węglowodany (g):</label>
+    <input type="number" [(ngModel)]="data.carbs" class="form-control">
+  </div>
+</div>
+<div class="dialog-actions">
+  <button (click)="save()" class="btn-save">Zapisz</button>
+  <button (click)="cancel()" class="btn-cancel">Anuluj</button>
+</div>
+</mat-dialog-content>

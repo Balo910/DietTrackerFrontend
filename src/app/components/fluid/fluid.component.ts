@@ -5,10 +5,11 @@ import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FluidEditDialogComponent } from './fluid-edit-dialog.component';
+import { FluidService } from './fluid.service';
+import { Fluid } from './fluid.model';
 
 @Component({
   selector: 'app-fluid',
-  standalone: true,
   imports: [CommonModule, RouterModule, FormsModule, DatePipe, MatDialogModule],
   templateUrl: './fluid.component.html',
   styleUrls: ['./fluid.component.scss']
@@ -16,11 +17,11 @@ import { FluidEditDialogComponent } from './fluid-edit-dialog.component';
 export class FluidComponent {
   private http = inject(HttpClient);
   private dialog = inject(MatDialog);
-  private apiUrl = 'http://localhost:8080/api';
 
   fluidEntries: any[] = [];
   isLoading = false;
   errorMessage: string | null = null;
+  fluidService: any;
 
   ngOnInit() {
     this.loadFluids();
@@ -28,7 +29,7 @@ export class FluidComponent {
 
   loadFluids() {
     this.isLoading = true;
-    this.http.get<any[]>(`${this.apiUrl}/fluid`).subscribe({
+    this.fluidService.loadFluids.getFluids.subscribe({
       next: (data) => {
         this.fluidEntries = data;
         this.isLoading = false;
@@ -57,15 +58,15 @@ export class FluidComponent {
     });
   }
 
-  addFluid(fluid: any) {
-    this.http.post(`${this.apiUrl}/fluid`, fluid).subscribe({
+  addFluid(fluid: Fluid) {
+    this.fluidService.addFluid(fluid).subscribe({
       next: () => this.loadFluids(),
       error: (err) => this.errorMessage = 'Błąd dodawania płynu'
     });
   }
 
-  updateFluid(fluid: any) {
-    this.http.put(`${this.apiUrl}/fluid/${fluid.id}`, fluid).subscribe({
+  updateFluid(fluid: Fluid) {
+    this.fluidService.updateFluid(fluid).subscribe({
       next: () => this.loadFluids(),
       error: (err) => this.errorMessage = 'Błąd aktualizacji płynu'
     });
@@ -73,7 +74,7 @@ export class FluidComponent {
 
   deleteFluid(id: number) {
     if (confirm('Czy na pewno chcesz usunąć ten wpis?')) {
-      this.http.delete(`${this.apiUrl}/fluid/${id}`).subscribe({
+      this.fluidService.deleteFluid(id).subscribe({
         next: () => this.loadFluids(),
         error: (err) => this.errorMessage = 'Błąd usuwania płynu'
       });
