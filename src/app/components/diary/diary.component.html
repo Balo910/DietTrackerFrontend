@@ -3,7 +3,9 @@
   
   <div class="date-controls">
     <button (click)="changeDate(-1)">← Poprzedni</button>
-    <input type="date" [(ngModel)]="currentDate" (change)="loadDiaries()">
+    <input type="date" 
+           [value]="currentDate | date:'yyyy-MM-dd'"
+           (change)="setNewDate($event)" />
     <button (click)="changeDate(1)">Następny →</button>
   </div>
 
@@ -11,27 +13,32 @@
     <div class="loading">Ładowanie...</div>
   } @else if (errorMessage) {
     <div class="error">{{ errorMessage }}</div>
-  } @else if (diaries.length === 0) {
-    <div class="empty">Brak wpisów na ten dzień</div>
   }
 
-  @for (meal of diaries; track meal.id) {
+  @for (meal of diaries; track meal.mealType) {
     <div class="meal-card">
-      <h3>{{ meal.mealType }}</h3>
+      <div class="meal-header">
+        <h3>{{ meal.mealType }}</h3>
+        <button (click)="openAddDialog(meal.mealType)">+ Dodaj</button>
+      </div>
       
+      @if (meal.foods.length === 0 && meal.fluids.length === 0) {
+        <div class="empty-meal">Brak wpisów</div>
+      }
+
       @for (food of meal.foods; track food.id) {
-        <div class="food-item">
-          <span>{{ food.name }}</span>
-          <span>{{ food.calories }} kcal</span>
+        <div class="entry food-entry">
+          <span>{{ food.name }} ({{ food.calories }} kcal)</span>
           <button (click)="removeFood(meal.id, food.id)">×</button>
         </div>
       }
 
-      <div class="add-food-form">
-        <input [(ngModel)]="newFoodName" placeholder="Nazwa">
-        <input type="number" [(ngModel)]="newFoodCalories" placeholder="Kalorie">
-        <button (click)="addFoodToMeal(meal.id)">Dodaj</button>
-      </div>
+      @for (fluid of meal.fluids; track fluid.id) {
+        <div class="entry fluid-entry">
+          <span>{{ fluid.name }} ({{ fluid.amount }} ml)</span>
+          <button (click)="removeFluid(meal.id, fluid.id)">×</button>
+        </div>
+      }
     </div>
   }
 

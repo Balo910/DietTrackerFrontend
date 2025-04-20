@@ -11,7 +11,32 @@ export class DiaryService {
 
   constructor(private http: HttpClient) {}
 
-  getDiaries(date: string): Observable<Diary[]> {
-    return this.http.get<Diary[]>(`${this.apiUrl}?date=${date}`);
+  addFoodToMeal(mealId: number, food: any): Observable<any> {
+    const request = {
+      diaryId: mealId,
+      foodId: food.id,
+      weight: food.weight || 100 
+    };
+    return this.http.post(`${this.apiUrl}`, request);
+  }
+
+  getAllDiariesWithFoods(): Observable<Diary[]> {
+    return this.http.get<Diary[]>(`${this.apiUrl}/with-foods`);
+  }
+
+  createDiary(diaryData: { mealType: string, date: string }): Observable<Diary> {
+    return this.http.post<Diary>(`${this.apiUrl}/create`, diaryData);
+  }
+
+  addFluidToMeal(mealId: number, fluid: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${mealId}/fluid`, fluid);
+  }
+
+  removeFoodFromMeal(mealId: number, foodId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${mealId}/food/${foodId}`);
+  }
+
+  removeFluidFromMeal(mealId: number, fluidId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${mealId}/fluid/${fluidId}`);
   }
 }

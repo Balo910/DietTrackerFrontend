@@ -1,54 +1,78 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { DiaryService } from './diary.service';
+import { FoodService } from '../food/food.service';
+import { FluidService } from '../fluid/fluid.service';
+import { DiaryEntryDialogComponent } from './dialog-diary-food/diary-entry-dialog.component';
 
 @Component({
   selector: 'app-diary',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    FormsModule,
-    DatePipe
-  ],
+  imports: [CommonModule, RouterModule, FormsModule, DatePipe, MatDialogModule],
   templateUrl: './diary.component.html',
-  styleUrl: './diary.component.scss'
+  styleUrls: ['./diary.component.scss']
 })
-export class DiaryComponent {
-  private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api';
+export class DiaryComponent implements OnInit {
+  private diaryService = inject(DiaryService);
+  private foodService = inject(FoodService);
+  private fluidService = inject(FluidService);
+  private route = inject(ActivatedRoute);
+  private dialog = inject(MatDialog);
 
- 
+  mealTypes = ['Śniadanie', 'II Śniadanie', 'Przekąska', 'Obiad', 'Kolacja'];
   diaries: any[] = [];
   currentDate: Date = new Date();
-  
-
   isLoading = false;
   errorMessage: string | null = null;
-  
-  newFoodName = '';
-  newFoodCalories = 0;
+  availableFoods: any[] = [];
+  availableFluids: any[] = [];
 
   ngOnInit(): void {
-    this.loadDiaries();
+    this.route.queryParams.subscribe(params => {
+      if (params['date']) {
+        this.currentDate = new Date(params['date']);
+      }
+      this.loadDiaries();
+      this.loadAvailableItems();
+    });
   }
 
   loadDiaries(): void {
     this.isLoading = true;
-    const dateStr = this.currentDate.toISOString().split('T')[0];
+    this.errorMessage = null;
+    const dateStr = this.formatDate(this.currentDate);
     
-    this.http.get<any[]>(`${this.apiUrl}/diary?date=${dateStr}`).subscribe({
+    this.diaryService.getAllDiariesWithFoods().subscribe({
       next: (data) => {
-        this.diaries = data;
+        this.diaries = this.mealTypes.map(mealType => {
+          const existingMeal = data.find((d: any) => d.mealType === mealType);
+          return existingMeal || {
+            mealType,
+            foods: [],
+            fluids: []
+          };
+        });
         this.isLoading = false;
       },
       error: (err) => {
-        this.errorMessage = 'Błąd ładowania danych';
+        this.errorMessage = 'Błąd ładowania danych: ' + (err.error?.message || err.message);
         this.isLoading = false;
+        console.error('Błąd ładowania dziennika:', err);
       }
     });
+  }
+
+  loadAvailableItems(): void {
+    this.foodService.getFoods().subscribe(foods => this.availableFoods = foods);
+    this.fluidService.getFluids().subscribe(fluids => this.availableFluids = fluids);
+  }
+
+  formatDate(date: Date): string {
+    return date.toISOString().split('T')[0];
   }
 
   changeDate(days: number): void {
@@ -60,29 +84,84 @@ export class DiaryComponent {
     this.loadDiaries();
   }
 
-  addFoodToMeal(mealId: number): void {
-    if (!this.newFoodName || !this.newFoodCalories) return;
+  openAddDialog(mealType: string): void {
+    const dialogRef = this.dialog.open(DiaryEntryDialogComponent, {
+      width: '600px',
+      data: {
+        foods: this.availableFoods,
+        fluids: this.availableFluids,
+        mealType
+      }
+    });
 
-    this.http.post(`${this.apiUrl}/diary/${mealId}/food`, {
-      name: this.newFoodName,
-      calories: this.newFoodCalories,
-      date: this.currentDate.toISOString()
-    }).subscribe({
-      next: () => {
-        this.loadDiaries();
-        this.newFoodName = '';
-        this.newFoodCalories = 0;
-      },
-      error: (err) => {
-        this.errorMessage = 'Błąd dodawania produktu';
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.addEntryToMeal(mealType, result);
       }
     });
   }
 
+  setNewDate(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const dateStr = input.value;
+    this.currentDate = new Date(dateStr);
+    this.loadDiaries();
+  }
+
+  addEntryToMeal(mealType: string, entry: any): void {
+    const meal = this.diaries.find(m => m.mealType === mealType);
+    if (!meal) {
+      this.diaryService.createDiary({
+        mealType,
+        date: this.formatDate(this.currentDate)
+      }).subscribe({
+        next: (newDiary) => {
+          this.addItemToMeal(newDiary.id, entry);
+        },
+        error: (err) => {
+          this.errorMessage = 'Błąd tworzenia dziennika';
+          console.error(err);
+        }
+      });
+    } else {
+      this.addItemToMeal(meal.id, entry);
+    }
+  }
+  
+  private addItemToMeal(mealId: number, entry: any): void {
+    if (entry.type === 'food') {
+      this.diaryService.addFoodToMeal(mealId, entry.item).subscribe({
+        next: () => {
+          this.loadDiaries();
+          this.errorMessage = null;
+        },
+        error: (err) => {
+          this.errorMessage = 'Błąd dodawania jedzenia: ' + (err.error?.message || err.message);
+          console.error(err);
+        }
+      });
+    } else {
+      // Obsługa płynów
+  }
+  }
+
   removeFood(mealId: number, foodId: number): void {
-    this.http.delete(`${this.apiUrl}/diary/${mealId}/food/${foodId}`).subscribe({
+    this.diaryService.removeFoodFromMeal(mealId, foodId).subscribe({
       next: () => this.loadDiaries(),
-      error: (err) => this.errorMessage = 'Błąd usuwania produktu'
+      error: (err) => {
+        this.errorMessage = 'Błąd podczas usuwania jedzenia';
+        console.error(err);
+      }
+    });
+  }
+
+  removeFluid(mealId: number, fluidId: number): void {
+    this.diaryService.removeFluidFromMeal(mealId, fluidId).subscribe({
+      next: () => this.loadDiaries(),
+      error: (err) => {
+        this.errorMessage = 'Błąd podczas usuwania płynu';
+        console.error(err);
+      }
     });
   }
 }

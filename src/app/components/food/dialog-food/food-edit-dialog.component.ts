@@ -5,10 +5,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   imports: [CommonModule, FormsModule,
-    MatDialogTitle,
     MatDialogContent,
-    MatDialogActions,
-    MatDialogClose,
   ],
   templateUrl: "./food-edit-dialog.component.html",
   styleUrls: ["./food-edit-dialog.component.scss"],
