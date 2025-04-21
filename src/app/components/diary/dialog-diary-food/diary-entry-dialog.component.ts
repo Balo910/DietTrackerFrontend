@@ -1,16 +1,16 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 
+
 @Component({
-  selector: 'app-diary-entry-dialog',
-  standalone: true,
-  imports: [CommonModule, FormsModule, MatTabsModule, MatInputModule, MatButtonModule],
+  imports: [CommonModule, FormsModule, MatTabsModule, MatInputModule, MatButtonModule, MatDialogContent],
   template: `
+  <mat-dialog-content>
     <h2>Dodaj do {{ data.mealType }}</h2>
     <mat-tab-group>
       <mat-tab label="Żywność">
@@ -37,6 +37,7 @@ import { MatButtonModule } from '@angular/material/button';
     <div class="actions">
       <button mat-button (click)="dialogRef.close()">Anuluj</button>
     </div>
+    </mat-dialog-content>
   `,
   styles: [`
     .tab-content {

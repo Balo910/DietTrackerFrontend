@@ -28,22 +28,35 @@
           <ul class="food-entry">
             <li>
               <span>{{ food?.foodName }} contains ({{ food.calories }} kcal)</span>
-              <table>
-                <tr>
-                  <th>Amount</th>
-                  <th>Calories</th>
-                  <th>Carbs</th>
-                  <th>Proteins</th>
-                  <th>Fats</th>
-                </tr>
-                <tr *ngFor="let food of diaryEntry.diaryFoods">
-                  <td>{{ food.weight }}</td>
-                  <td>{{ food.calories }}</td>
-                  <td>{{ food.carbs }}</td>
-                  <td>{{ food.proteins }}</td>
-                  <td>{{ food.fats }}</td>
-                </tr>
-              </table>
+                <table mat-table [dataSource]="diaryEntry.diaryFoods" class="mat-elevation-z8">
+                <ng-container matColumnDef="weight">
+                  <th mat-header-cell *matHeaderCellDef> Amount </th>
+                  <td mat-cell *matCellDef="let food"> {{ food.weight }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="calories">
+                  <th mat-header-cell *matHeaderCellDef> Calories </th>
+                  <td mat-cell *matCellDef="let food"> {{ food.calories }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="carbs">
+                  <th mat-header-cell *matHeaderCellDef> Carbs </th>
+                  <td mat-cell *matCellDef="let food"> {{ food.carbs }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="proteins">
+                  <th mat-header-cell *matHeaderCellDef> Proteins </th>
+                  <td mat-cell *matCellDef="let food"> {{ food.proteins }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="fats">
+                  <th mat-header-cell *matHeaderCellDef> Fats </th>
+                  <td mat-cell *matCellDef="let food"> {{ food.fats }} </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="['weight', 'calories', 'carbs', 'proteins', 'fats']"></tr>
+                <tr mat-row *matRowDef="let row; columns: ['weight', 'calories', 'carbs', 'proteins', 'fats'];"></tr>
+                </table>
               <button (click)="removeFood(diaryEntry.id, food.foodId)">×</button>
             </li>
           </ul>

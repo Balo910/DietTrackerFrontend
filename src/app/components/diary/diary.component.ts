@@ -10,10 +10,11 @@ import { FluidService } from '../fluid/fluid.service';
 import { DiaryEntryDialogComponent } from './dialog-diary-food/diary-entry-dialog.component';
 import { Diary } from './diary.model';
 import { BehaviorSubject } from 'rxjs';
+import {MatTable, MatTableModule} from '@angular/material/table';
 
 @Component({
   selector: 'app-diary',
-  imports: [CommonModule, RouterModule, FormsModule, DatePipe, MatDialogModule],
+  imports: [CommonModule, RouterModule, FormsModule, DatePipe, MatDialogModule, MatTableModule],
   templateUrl: './diary.component.html',
   styleUrls: ['./diary.component.scss']
 })
@@ -53,7 +54,7 @@ export class DiaryComponent implements OnInit {
       next: (diaries) => {
         console.log(this.currentDate)
         const year = this.currentDate.getFullYear();
-        const month = this.currentDate.getMonth() + 1; // Months are zero-based
+        const month = this.currentDate.getMonth() + 1; 
         const day = this.currentDate.getDate();
         const givenDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
 
