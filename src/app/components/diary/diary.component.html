@@ -15,6 +15,43 @@
     <div class="error">{{ errorMessage }}</div>
   }
 
+  <button (click)="openAddDialog('breakfast')">Add new diary entry</button>
+
+  @let diariesWithFoods = givenDayDiary$ | async;
+  @for (diaryEntry of diariesWithFoods; track diaryEntry.id) {
+    <div class="entry diary-entry">
+      <span>ID: {{diaryEntry.id}}</span>
+      <div>Date: {{diaryEntry.date}}</div>
+      @if (diaryEntry.diaryFoods?.length) {
+        <div>Foods:</div>
+        @for (food of diaryEntry.diaryFoods; track food.id) {
+          <ul class="food-entry">
+            <li>
+              <span>{{ food?.foodName }} contains ({{ food.calories }} kcal)</span>
+              <table>
+                <tr>
+                  <th>Amount</th>
+                  <th>Calories</th>
+                  <th>Carbs</th>
+                  <th>Proteins</th>
+                  <th>Fats</th>
+                </tr>
+                <tr *ngFor="let food of diaryEntry.diaryFoods">
+                  <td>{{ food.weight }}</td>
+                  <td>{{ food.calories }}</td>
+                  <td>{{ food.carbs }}</td>
+                  <td>{{ food.proteins }}</td>
+                  <td>{{ food.fats }}</td>
+                </tr>
+              </table>
+              <button (click)="removeFood(diaryEntry.id, food.foodId)">×</button>
+            </li>
+          </ul>
+        }
+      } 
+    </div>
+  }
+
   @for (meal of diaries; track meal.mealType) {
     <div class="meal-card">
       <div class="meal-header">
@@ -22,24 +59,19 @@
         <button (click)="openAddDialog(meal.mealType)">+ Dodaj</button>
       </div>
       
-      @if (meal.foods.length === 0 && meal.fluids.length === 0) {
+      @if (meal.diaryFoods.length === 0 && meal.fluids.length === 0) {
         <div class="empty-meal">Brak wpisów</div>
       }
 
-      @for (food of meal.foods; track food.id) {
+      @for (food of meal.diaryFoods; track food.id) {
         <div class="entry food-entry">
-          <span>{{ food.name }} ({{ food.calories }} kcal)</span>
-          <button (click)="removeFood(meal.id, food.id)">×</button>
+          <span>{{ food.foodName }} ({{ food.calories }} kcal)</span>
+          <button (click)="removeFood(meal.id, food.foodId)">×</button>
         </div>
       }
 
-      @for (fluid of meal.fluids; track fluid.id) {
-        <div class="entry fluid-entry">
-          <span>{{ fluid.name }} ({{ fluid.amount }} ml)</span>
-          <button (click)="removeFluid(meal.id, fluid.id)">×</button>
-        </div>
-      }
     </div>
+
   }
 
   <button class="back-btn" routerLink="/">Powrót</button>

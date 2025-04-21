@@ -8,24 +8,28 @@ import { DiaryService } from './diary.service';
 import { FoodService } from '../food/food.service';
 import { FluidService } from '../fluid/fluid.service';
 import { DiaryEntryDialogComponent } from './dialog-diary-food/diary-entry-dialog.component';
+import { Diary } from './diary.model';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-diary',
-  standalone: true,
   imports: [CommonModule, RouterModule, FormsModule, DatePipe, MatDialogModule],
   templateUrl: './diary.component.html',
   styleUrls: ['./diary.component.scss']
 })
 export class DiaryComponent implements OnInit {
+
   private diaryService = inject(DiaryService);
   private foodService = inject(FoodService);
   private fluidService = inject(FluidService);
   private route = inject(ActivatedRoute);
   private dialog = inject(MatDialog);
 
+  givenDayDiary$ = new BehaviorSubject<Diary[]>([]);
+
   mealTypes = ['Śniadanie', 'II Śniadanie', 'Przekąska', 'Obiad', 'Kolacja'];
-  diaries: any[] = [];
-  currentDate: Date = new Date();
+  diaries: Diary[] = [];
+  currentDate = new Date();
   isLoading = false;
   errorMessage: string | null = null;
   availableFoods: any[] = [];
@@ -44,26 +48,31 @@ export class DiaryComponent implements OnInit {
   loadDiaries(): void {
     this.isLoading = true;
     this.errorMessage = null;
-    const dateStr = this.formatDate(this.currentDate);
-    
+
     this.diaryService.getAllDiariesWithFoods().subscribe({
-      next: (data) => {
-        this.diaries = this.mealTypes.map(mealType => {
-          const existingMeal = data.find((d: any) => d.mealType === mealType);
-          return existingMeal || {
-            mealType,
-            foods: [],
-            fluids: []
-          };
-        });
-        this.isLoading = false;
+      next: (diaries) => {
+        console.log(this.currentDate)
+        const year = this.currentDate.getFullYear();
+        const month = this.currentDate.getMonth() + 1; // Months are zero-based
+        const day = this.currentDate.getDate();
+        const givenDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+
+        console.log(givenDate)
+        this.givenDayDiary$.next(diaries
+          .filter(item => {
+            return item.date.split(":")[0] === givenDate
+          })
+          .filter(item => item.diaryFoods.length > 0));
       },
       error: (err) => {
-        this.errorMessage = 'Błąd ładowania danych: ' + (err.error?.message || err.message);
+        this.errorMessage = 'Błąd podczas ładowania dzienników';
+        console.error(err);
+      },
+      complete: () => {
         this.isLoading = false;
-        console.error('Błąd ładowania dziennika:', err);
       }
-    });
+    })
+    
   }
 
   loadAvailableItems(): void {

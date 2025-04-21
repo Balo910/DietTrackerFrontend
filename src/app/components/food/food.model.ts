@@ -8,3 +8,4 @@ export interface Food {
   carbs: number;
   tags?: string[];
 }
+
