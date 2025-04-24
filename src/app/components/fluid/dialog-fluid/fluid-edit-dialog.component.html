@@ -1,0 +1,17 @@
+<h2>{{ data.id ? 'Edytuj' : 'Dodaj' }} płyn</h2>
+    <div class="form-group">
+      <label>Nazwa:</label>
+      <input [(ngModel)]="data.name" class="form-control" />
+    </div>
+    <div class="form-group">
+      <label>Ilość (ml):</label>
+      <input type="number" [(ngModel)]="data.volume" class="form-control" />
+    </div>
+    <div class="form-group">
+      <label>Kalorie:</label>
+      <input type="number" [(ngModel)]="data.calories" class="form-control" />
+    </div>
+    <div class="dialog-actions">
+      <button (click)="save()" class="btn-save">Zapisz</button>
+      <button (click)="cancel()" class="btn-cancel">Anuluj</button>
+    </div>

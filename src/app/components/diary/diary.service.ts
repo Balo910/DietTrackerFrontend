@@ -32,8 +32,8 @@ export class DiaryService {
     return this.http.post(`${this.apiUrl}/${mealId}/fluid`, fluid);
   }
 
-  removeFoodFromMeal(mealId: number, foodId: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${mealId}/food/${foodId}`);
+  removeFoodFromMeal(diaryId: number, foodId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${diaryId}/food/${foodId}`);
   }
 
   removeFluidFromMeal(mealId: number, fluidId: number): Observable<any> {

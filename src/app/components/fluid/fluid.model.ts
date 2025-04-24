@@ -3,4 +3,5 @@ export interface Fluid {
   name: string;
   volume: number;
   calories: number;
+  date?: string;
 }

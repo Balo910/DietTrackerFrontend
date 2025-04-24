@@ -7,7 +7,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DiaryService } from './diary.service';
 import { FoodService } from '../food/food.service';
 import { FluidService } from '../fluid/fluid.service';
-import { DiaryEntryDialogComponent } from './dialog-diary-food/diary-entry-dialog.component';
+import { DiaryEntryDialogComponent } from './dialog-entry/dialog-entry-dialog.component';
 import { Diary } from './diary.model';
 import { BehaviorSubject } from 'rxjs';
 import {MatTable, MatTableModule} from '@angular/material/table';
@@ -141,28 +141,41 @@ export class DiaryComponent implements OnInit {
   private addItemToMeal(mealId: number, entry: any): void {
     if (entry.type === 'food') {
       this.diaryService.addFoodToMeal(mealId, entry.item).subscribe({
-        next: () => {
-          this.loadDiaries();
-          this.errorMessage = null;
-        },
+        next: () => this.loadDiaries(),
         error: (err) => {
           this.errorMessage = 'Błąd dodawania jedzenia: ' + (err.error?.message || err.message);
           console.error(err);
         }
       });
-    } else {
-      // Obsługa płynów
+    } else if (entry.type === 'fluid') {
+      this.diaryService.addFluidToMeal(mealId, entry.item).subscribe({
+        next: () => this.loadDiaries(),
+        error: (err) => {
+          this.errorMessage = 'Błąd dodawania płynu: ' + (err.error?.message || err.message);
+          console.error(err);
+        }
+      });
+    }
   }
-  }
+  
+  
 
-  removeFood(mealId: number, foodId: number): void {
-    this.diaryService.removeFoodFromMeal(mealId, foodId).subscribe({
-      next: () => this.loadDiaries(),
-      error: (err) => {
-        this.errorMessage = 'Błąd podczas usuwania jedzenia';
-        console.error(err);
-      }
-    });
+  removeFood(diaryId: number, foodId: number): void {
+    if (confirm('Czy na pewno chcesz usunąć ten produkt z dziennika?')) {
+      this.isLoading = true;
+      this.errorMessage = null;
+      
+      this.diaryService.removeFoodFromMeal(diaryId, foodId).subscribe({
+        next: () => {
+          this.loadDiaries();
+        },
+        error: (err) => {
+          this.errorMessage = 'Błąd podczas usuwania produktu: ' + (err.error?.message || err.message);
+          this.isLoading = false;
+          console.error(err);
+        }
+      });
+    }
   }
 
   removeFluid(mealId: number, fluidId: number): void {
