@@ -1,91 +1,78 @@
 <div class="diary-container">
   <h2>Dziennik żywieniowy - {{ currentDate | date:'dd.MM.yyyy' }}</h2>
-  
+
   <div class="date-controls">
     <button (click)="changeDate(-1)">← Poprzedni</button>
     <input type="date" 
            [value]="currentDate | date:'yyyy-MM-dd'"
-           (change)="setNewDate($event)" />
+           (change)="setNewDate($event)">
     <button (click)="changeDate(1)">Następny →</button>
   </div>
 
-  @if (isLoading) {
-    <div class="loading">Ładowanie...</div>
-  } @else if (errorMessage) {
-    <div class="error">{{ errorMessage }}</div>
-  }
+  <div *ngIf="isLoading" class="loading">Ładowanie...</div>
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
 
-  <button (click)="openAddDialog('breakfast')">Add new diary entry</button>
+  <button (click)="openAddDialog()">Dodaj nowy wpis do dziennika</button>
 
-  @let diariesWithFoods = givenDayDiary$ | async;
-  @for (diaryEntry of diariesWithFoods; track diaryEntry.id) {
-    <div class="entry diary-entry">
-      <span>ID: {{diaryEntry.id}}</span>
-      <div>Date: {{diaryEntry.date}}</div>
-      @if (diaryEntry.diaryFoods?.length) {
-        <div>Foods:</div>
-        @for (food of diaryEntry.diaryFoods; track food.id) {
-          <ul class="food-entry">
-            <li>
-              <span>{{ food?.foodName }} contains ({{ food.calories }} kcal)</span>
-                <table mat-table [dataSource]="diaryEntry.diaryFoods" class="mat-elevation-z8">
-                <ng-container matColumnDef="weight">
-                  <th mat-header-cell *matHeaderCellDef> Amount </th>
-                  <td mat-cell *matCellDef="let food"> {{ food.weight }} </td>
-                </ng-container>
+  <div *ngIf="(givenDayDiary$ | async) as diariesWithFoods">
+    <div *ngFor="let diaryEntry of diariesWithFoods; trackBy: trackByDiaryId" class="entry diary-entry">
+      <div>Data: {{ diaryEntry.date | date:'dd.MM.yyyy' }}</div>
 
-                <ng-container matColumnDef="calories">
-                  <th mat-header-cell *matHeaderCellDef> Calories </th>
-                  <td mat-cell *matCellDef="let food"> {{ food.calories }} </td>
-                </ng-container>
+      <div *ngIf="diaryEntry.diaryFoods?.length">
+        <h4>Produkty:</h4>
+        <table mat-table [dataSource]="diaryEntry.diaryFoods" class="mat-elevation-z8">
 
-                <ng-container matColumnDef="carbs">
-                  <th mat-header-cell *matHeaderCellDef> Carbs </th>
-                  <td mat-cell *matCellDef="let food"> {{ food.carbs }} </td>
-                </ng-container>
+          <ng-container matColumnDef="foodName">
+            <th mat-header-cell *matHeaderCellDef> Produkt </th>
+            <td mat-cell *matCellDef="let food"> {{ food.foodName }} </td>
+          </ng-container>
 
-                <ng-container matColumnDef="proteins">
-                  <th mat-header-cell *matHeaderCellDef> Proteins </th>
-                  <td mat-cell *matCellDef="let food"> {{ food.proteins }} </td>
-                </ng-container>
+          <ng-container matColumnDef="weight">
+            <th mat-header-cell *matHeaderCellDef> Waga (g) </th>
+            <td mat-cell *matCellDef="let food"> {{ food.weight }} </td>
+          </ng-container>
 
-                <ng-container matColumnDef="fats">
-                  <th mat-header-cell *matHeaderCellDef> Fats </th>
-                  <td mat-cell *matCellDef="let food"> {{ food.fats }} </td>
-                </ng-container>
+          <ng-container matColumnDef="calories">
+            <th mat-header-cell *matHeaderCellDef> Kalorie </th>
+            <td mat-cell *matCellDef="let food"> {{ food.calories }} </td>
+          </ng-container>
 
-                <tr mat-header-row *matHeaderRowDef="['weight', 'calories', 'carbs', 'proteins', 'fats']"></tr>
-                <tr mat-row *matRowDef="let row; columns: ['weight', 'calories', 'carbs', 'proteins', 'fats'];"></tr>
-                </table>
-              <button (click)="removeFood(diaryEntry.id, food.foodId)">×</button>
-            </li>
-          </ul>
-        }
-      } 
-    </div>
-  }
+          <ng-container matColumnDef="carbs">
+            <th mat-header-cell *matHeaderCellDef> Węglowodany </th>
+            <td mat-cell *matCellDef="let food"> {{ food.carbs }} </td>
+          </ng-container>
 
-  @for (meal of diaries; track meal.mealType) {
-    <div class="meal-card">
-      <div class="meal-header">
-        <h3>{{ meal.mealType }}</h3>
-        <button (click)="openAddDialog(meal.mealType)">+ Dodaj</button>
-      </div>
-      
-      @if (meal.diaryFoods.length === 0 && meal.fluids.length === 0) {
-        <div class="empty-meal">Brak wpisów</div>
-      }
+          <ng-container matColumnDef="proteins">
+            <th mat-header-cell *matHeaderCellDef> Białko </th>
+            <td mat-cell *matCellDef="let food"> {{ food.proteins }} </td>
+          </ng-container>
 
-      @for (food of meal.diaryFoods; track food.id) {
-        <div class="entry food-entry">
-          <span>{{ food.foodName }} ({{ food.calories }} kcal)</span>
-          <button (click)="removeFood(meal.id, food.foodId)">×</button>
+          <ng-container matColumnDef="fats">
+            <th mat-header-cell *matHeaderCellDef> Tłuszcze </th>
+            <td mat-cell *matCellDef="let food"> {{ food.fats }} </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['foodName', 'weight', 'calories', 'carbs', 'proteins', 'fats']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['foodName', 'weight', 'calories', 'carbs', 'proteins', 'fats']"></tr>
+
+        </table>
+        <div *ngFor="let food of diaryEntry.diaryFoods">
+          <button (click)="removeFood(diaryEntry.id, food.foodId)">Usuń {{ food.foodName }}</button>
         </div>
-      }
+      </div>
+
+      <div *ngIf="diaryEntry.diaryFluids?.length">
+        <h4>Płyny:</h4>
+        <ul>
+          <li *ngFor="let fluid of diaryEntry.diaryFluids">
+            {{ fluid.fluidName }} ({{ fluid.volume }} ml, {{ fluid.calories }} kcal)
+            <button (click)="removeFluid(diaryEntry.id, fluid.fluidId)">Usuń</button>
+          </li>
+        </ul>
+      </div>
 
     </div>
-
-  }
+  </div>
 
   <button class="back-btn" routerLink="/">Powrót</button>
 </div>

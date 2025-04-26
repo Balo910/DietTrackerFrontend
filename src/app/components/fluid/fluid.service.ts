@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Fluid } from '../fluid/fluid.model';
+import { Fluid } from './fluid.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FluidService {
-
-
-  private apiUrl = 'http://localhost:8080/api/fluid';
+  
+  
+  private apiUrl = 'http://localhost:8080/api/fluid'; 
 
   constructor(private http: HttpClient) {}
 
@@ -25,8 +25,8 @@ export class FluidService {
     return this.http.post<any>(this.apiUrl, fluid);
   }
 
-  updateFluid(food: Fluid): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${food.id}`, food);
+  updateFluid(fluid: Fluid): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${fluid.id}`, fluid);
   }
 
   deleteFluid(id: number): Observable<any> {

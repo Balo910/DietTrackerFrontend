@@ -1,49 +1,53 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { FluidService } from './fluid.service';
 import { FluidEditDialogComponent } from './dialog-fluid/fluid-edit-dialog.component';
+import { FluidService } from './fluid.service';
 import { Fluid } from './fluid.model';
 
 @Component({
   selector: 'app-fluid',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, MatDialogModule],
+  imports: [CommonModule, RouterModule, FormsModule, DatePipe, MatDialogModule],
   templateUrl: './fluid.component.html',
   styleUrls: ['./fluid.component.scss']
 })
-export class FluidComponent implements OnInit {
+export class FluidComponent {
   private fluidService = inject(FluidService);
   private dialog = inject(MatDialog);
 
-  fluidEntries: Fluid[] = [];
+  fluidItems: any[] = [];
   isLoading = false;
   errorMessage: string | null = null;
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.loadFluids();
   }
 
   loadFluids() {
     this.isLoading = true;
     this.fluidService.getFluids().subscribe({
-      next: data => {
-        this.fluidEntries = data;
+      next: (data) => {
+        this.fluidItems = data;
         this.isLoading = false;
       },
-      error: () => {
+      error: (err) => {
         this.errorMessage = 'Błąd ładowania danych';
         this.isLoading = false;
       }
     });
   }
 
-  openEditDialog(entry?: Fluid) {
+  openEditDialog(fluid?: any) {
     const dialogRef = this.dialog.open(FluidEditDialogComponent, {
-      width: '500px',
-      data: entry || { name: '', volume: 0, calories: 0 }
+      data: fluid || { 
+        name: '', 
+        calories: 0, 
+        date: new Date().toISOString()
+      },
+      width: '500px'
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -57,17 +61,17 @@ export class FluidComponent implements OnInit {
     });
   }
 
-  addFluid(fluid: Fluid) {
+  addFluid(fluid: any) {
     this.fluidService.addFluid(fluid).subscribe({
       next: () => this.loadFluids(),
-      error: () => this.errorMessage = 'Błąd dodawania płynu'
+      error: (err) => this.errorMessage = 'Błąd dodawania płynu'
     });
   }
 
-  updateFluid(fluid: Fluid) {
+  updateFluid(fluid: any) {
     this.fluidService.updateFluid(fluid).subscribe({
       next: () => this.loadFluids(),
-      error: () => this.errorMessage = 'Błąd aktualizacji płynu'
+      error: (err) => this.errorMessage = 'Błąd aktualizacji płynu'
     });
   }
 
@@ -75,7 +79,7 @@ export class FluidComponent implements OnInit {
     if (confirm('Czy na pewno chcesz usunąć ten płyn?')) {
       this.fluidService.deleteFluid(id).subscribe({
         next: () => this.loadFluids(),
-        error: () => this.errorMessage = 'Błąd usuwania płynu'
+        error: (err) => this.errorMessage = 'Błąd usuwania płynu'
       });
     }
   }

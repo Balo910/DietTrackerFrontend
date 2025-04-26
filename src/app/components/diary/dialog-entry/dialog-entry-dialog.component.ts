@@ -32,7 +32,11 @@ export class DiaryEntryDialogComponent {
       };
       this.dialogRef.close({ type, item: foodWithWeight });
     } else {
-      this.dialogRef.close({ type, item });
+      const fluidWithVolume = {
+        ...item,
+        volume: this.selectedWeight
+      };
+      this.dialogRef.close({ type, item: fluidWithVolume });
     }
   }
 }

@@ -16,8 +16,14 @@
     </mat-tab>
     <mat-tab label="Płyny">
       <div class="tab-content">
+        <div class="food-details">
+          <div class="form-group">
+            <label>Objętość (ml):</label>
+            <input type="number" [(ngModel)]="selectedWeight" class="form-control" min="1" value="100">
+          </div>
+        </div>
         <div *ngFor="let fluid of data.fluids" class="item" (click)="selectItem('fluid', fluid)">
-          {{ fluid.name }} ({{ fluid.amount }} ml)
+          {{ fluid.name }} ({{ fluid.calories }} kcal/100ml)
         </div>
       </div>
     </mat-tab>

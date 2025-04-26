@@ -1,42 +1,34 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Diary } from './diary.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DiaryService {
-  private apiUrl = 'http://localhost:8080/api/diary';
-
   constructor(private http: HttpClient) {}
 
-  addFoodToMeal(mealId: number, food: any): Observable<any> {
-    const request = {
-      diaryId: mealId,
-      foodId: food.id,
-      weight: food.weight || 100 
-    };
-    return this.http.post(`${this.apiUrl}`, request);
+  getAllDiariesWithFoodsAndFluids(): Observable<any[]> {
+    return this.http.get<any[]>('/api/diary/with-foods');
   }
 
-  getAllDiariesWithFoods(): Observable<Diary[]> {
-    return this.http.get<Diary[]>(`${this.apiUrl}/with-foods`);
+  createDiary(data: { date: string }): Observable<any> {
+    return this.http.post<any>('/api/diary/create', data);
   }
 
-  createDiary(diaryData: { mealType: string, date: string }): Observable<Diary> {
-    return this.http.post<Diary>(`${this.apiUrl}/create`, diaryData);
+  addFoodToDiary(data: { diaryId: number, foodId: number, weight: number }): Observable<any> {
+    return this.http.post<any>('/api/diary/add-food', data);
   }
 
-  addFluidToMeal(mealId: number, fluid: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${mealId}/fluid`, fluid);
+  addFluidToDiary(data: { diaryId: number, fluidId: number, volume: number }): Observable<any> {
+    return this.http.post<any>('/api/diary/add-fluid', data);
   }
 
-  removeFoodFromMeal(diaryId: number, foodId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${diaryId}/food/${foodId}`);
+  deleteDiaryFood(diaryId: number, foodId: number): Observable<void> {
+    return this.http.delete<void>(`/api/diary/${diaryId}/food/${foodId}`);
   }
 
-  removeFluidFromMeal(mealId: number, fluidId: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${mealId}/fluid/${fluidId}`);
+  deleteDiaryFluid(diaryId: number, fluidId: number): Observable<void> {
+    return this.http.delete<void>(`/api/diary/${diaryId}/fluid/${fluidId}`);
   }
 }

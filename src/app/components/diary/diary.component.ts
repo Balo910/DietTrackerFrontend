@@ -8,9 +8,8 @@ import { DiaryService } from './diary.service';
 import { FoodService } from '../food/food.service';
 import { FluidService } from '../fluid/fluid.service';
 import { DiaryEntryDialogComponent } from './dialog-entry/dialog-entry-dialog.component';
-import { Diary } from './diary.model';
 import { BehaviorSubject } from 'rxjs';
-import {MatTable, MatTableModule} from '@angular/material/table';
+import { MatTableModule } from '@angular/material/table';
 
 @Component({
   selector: 'app-diary',
@@ -19,17 +18,13 @@ import {MatTable, MatTableModule} from '@angular/material/table';
   styleUrls: ['./diary.component.scss']
 })
 export class DiaryComponent implements OnInit {
-
   private diaryService = inject(DiaryService);
   private foodService = inject(FoodService);
   private fluidService = inject(FluidService);
   private route = inject(ActivatedRoute);
   private dialog = inject(MatDialog);
 
-  givenDayDiary$ = new BehaviorSubject<Diary[]>([]);
-
-  mealTypes = ['Śniadanie', 'II Śniadanie', 'Przekąska', 'Obiad', 'Kolacja'];
-  diaries: Diary[] = [];
+  givenDayDiary$ = new BehaviorSubject<any[]>([]);
   currentDate = new Date();
   isLoading = false;
   errorMessage: string | null = null;
@@ -49,40 +44,33 @@ export class DiaryComponent implements OnInit {
   loadDiaries(): void {
     this.isLoading = true;
     this.errorMessage = null;
+    const formattedDate = this.formatDate(this.currentDate);
 
-    this.diaryService.getAllDiariesWithFoods().subscribe({
+    this.diaryService.getAllDiariesWithFoodsAndFluids().subscribe({
       next: (diaries) => {
-        console.log(this.currentDate)
-        const year = this.currentDate.getFullYear();
-        const month = this.currentDate.getMonth() + 1; 
-        const day = this.currentDate.getDate();
-        const givenDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-
-        console.log(givenDate)
-        this.givenDayDiary$.next(diaries
-          .filter(item => {
-            return item.date.split(":")[0] === givenDate
-          })
-          .filter(item => item.diaryFoods.length > 0));
+        const filteredDiaries = diaries.filter(item => 
+          item.date && item.date.includes(formattedDate)
+        );
+        this.givenDayDiary$.next(filteredDiaries);
+        this.isLoading = false;
       },
       error: (err) => {
         this.errorMessage = 'Błąd podczas ładowania dzienników';
-        console.error(err);
-      },
-      complete: () => {
         this.isLoading = false;
       }
-    })
-    
+    });
+  }
+
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   loadAvailableItems(): void {
     this.foodService.getFoods().subscribe(foods => this.availableFoods = foods);
     this.fluidService.getFluids().subscribe(fluids => this.availableFluids = fluids);
-  }
-
-  formatDate(date: Date): string {
-    return date.toISOString().split('T')[0];
   }
 
   changeDate(days: number): void {
@@ -94,97 +82,74 @@ export class DiaryComponent implements OnInit {
     this.loadDiaries();
   }
 
-  openAddDialog(mealType: string): void {
+  setNewDate(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const dateString = input.value;
+  
+    if (dateString) {
+      this.currentDate = new Date(dateString);
+      this.loadDiaries();
+    }
+  }
+
+
+  openAddDialog(): void {
     const dialogRef = this.dialog.open(DiaryEntryDialogComponent, {
       width: '600px',
       data: {
         foods: this.availableFoods,
-        fluids: this.availableFluids,
-        mealType
+        fluids: this.availableFluids
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.addEntryToMeal(mealType, result);
+        this.addEntry(result);
       }
     });
   }
 
-  setNewDate(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const dateStr = input.value;
-    this.currentDate = new Date(dateStr);
-    this.loadDiaries();
-  }
-
-  addEntryToMeal(mealType: string, entry: any): void {
-    const meal = this.diaries.find(m => m.mealType === mealType);
-    if (!meal) {
-      this.diaryService.createDiary({
-        mealType,
-        date: this.formatDate(this.currentDate)
-      }).subscribe({
-        next: (newDiary) => {
-          this.addItemToMeal(newDiary.id, entry);
-        },
-        error: (err) => {
-          this.errorMessage = 'Błąd tworzenia dziennika';
-          console.error(err);
+  addEntry(entry: any): void {
+    this.diaryService.createDiary({
+      date: this.formatDate(this.currentDate)
+    }).subscribe({
+      next: (newDiary) => {
+        if (entry.type === 'food') {
+          this.diaryService.addFoodToDiary({
+            diaryId: newDiary.id,
+            foodId: entry.item.id,
+            weight: entry.item.weight
+          }).subscribe(() => this.loadDiaries());
+        } else if (entry.type === 'fluid') {
+          this.diaryService.addFluidToDiary({
+            diaryId: newDiary.id,
+            fluidId: entry.item.id,
+            volume: entry.item.volume
+          }).subscribe(() => this.loadDiaries());
         }
-      });
-    } else {
-      this.addItemToMeal(meal.id, entry);
-    }
+      },
+      error: (err) => {
+        this.errorMessage = 'Błąd dodawania wpisu';
+      }
+    });
   }
-  
-  private addItemToMeal(mealId: number, entry: any): void {
-    if (entry.type === 'food') {
-      this.diaryService.addFoodToMeal(mealId, entry.item).subscribe({
-        next: () => this.loadDiaries(),
-        error: (err) => {
-          this.errorMessage = 'Błąd dodawania jedzenia: ' + (err.error?.message || err.message);
-          console.error(err);
-        }
-      });
-    } else if (entry.type === 'fluid') {
-      this.diaryService.addFluidToMeal(mealId, entry.item).subscribe({
-        next: () => this.loadDiaries(),
-        error: (err) => {
-          this.errorMessage = 'Błąd dodawania płynu: ' + (err.error?.message || err.message);
-          console.error(err);
-        }
-      });
-    }
-  }
-  
-  
 
   removeFood(diaryId: number, foodId: number): void {
-    if (confirm('Czy na pewno chcesz usunąć ten produkt z dziennika?')) {
-      this.isLoading = true;
-      this.errorMessage = null;
-      
-      this.diaryService.removeFoodFromMeal(diaryId, foodId).subscribe({
-        next: () => {
-          this.loadDiaries();
-        },
-        error: (err) => {
-          this.errorMessage = 'Błąd podczas usuwania produktu: ' + (err.error?.message || err.message);
-          this.isLoading = false;
-          console.error(err);
-        }
-      });
+    if (confirm('Czy na pewno usunąć ten produkt?')) {
+      this.diaryService.deleteDiaryFood(diaryId, foodId)
+        .subscribe(() => this.loadDiaries());
     }
   }
 
-  removeFluid(mealId: number, fluidId: number): void {
-    this.diaryService.removeFluidFromMeal(mealId, fluidId).subscribe({
-      next: () => this.loadDiaries(),
-      error: (err) => {
-        this.errorMessage = 'Błąd podczas usuwania płynu';
-        console.error(err);
-      }
-    });
+  removeFluid(diaryId: number, fluidId: number): void {
+    if (confirm('Czy na pewno usunąć ten płyn?')) {
+      this.diaryService.deleteDiaryFluid(diaryId, fluidId)
+        .subscribe(() => this.loadDiaries());
+    }
   }
+
+  trackByDiaryId(index: number, item: any): number {
+    return item.id;
+  }
+
 }

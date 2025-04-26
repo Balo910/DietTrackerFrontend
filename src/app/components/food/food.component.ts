@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FoodEditDialogComponent } from './dialog-food/food-edit-dialog.component';
 import { FoodService } from './food.service';
+import { Food } from './food.model';
 
 @Component({
   selector: 'app-food',
