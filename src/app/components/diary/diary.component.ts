@@ -45,11 +45,12 @@ export class DiaryComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = null;
     const formattedDate = this.formatDate(this.currentDate);
-
+  
     this.diaryService.getAllDiariesWithFoodsAndFluids().subscribe({
       next: (diaries) => {
         const filteredDiaries = diaries.filter(item => 
-          item.date && item.date.includes(formattedDate)
+          item.date && item.date.includes(formattedDate) &&
+          (item.diaryFoods.length > 0 || item.diaryFluids.length > 0) 
         );
         this.givenDayDiary$.next(filteredDiaries);
         this.isLoading = false;
@@ -60,6 +61,7 @@ export class DiaryComponent implements OnInit {
       }
     });
   }
+  
 
   private formatDate(date: Date): string {
     const year = date.getFullYear();
