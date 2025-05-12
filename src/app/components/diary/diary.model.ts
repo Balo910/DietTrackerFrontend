@@ -9,3 +9,4 @@ export interface Diary {
   diaryFoods: FoodInDiary[];
   fluids: Fluid[];
 }
+

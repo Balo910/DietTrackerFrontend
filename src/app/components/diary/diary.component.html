@@ -3,76 +3,128 @@
 
   <div class="date-controls">
     <button (click)="changeDate(-1)">← Poprzedni</button>
-    <input type="date" 
+    <input type="date"
            [value]="currentDate | date:'yyyy-MM-dd'"
            (change)="setNewDate($event)">
     <button (click)="changeDate(1)">Następny →</button>
   </div>
 
-  <div *ngIf="isLoading" class="loading">Ładowanie...</div>
-  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  @if (isLoading) {
+    <div class="loading-message">Ładowanie...</div>
+  } @else if (errorMessage) {
+    <div class="error-message">{{ errorMessage }}</div>
+  }
 
-  <button (click)="openAddDialog()">Dodaj nowy wpis do dziennika</button>
+  <button class="add-button" (click)="openAddDialog()">
+    <svg viewBox="0 0 24 24" width="18" height="18">
+      <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+    </svg>
+    Dodaj nowy wpis
+  </button>
 
   <div *ngIf="(givenDayDiary$ | async) as diariesWithFoods">
-    <div *ngFor="let diaryEntry of diariesWithFoods; trackBy: trackByDiaryId" class="entry diary-entry">
-      <div>Data: {{ diaryEntry.date | date:'dd.MM.yyyy' }}</div>
 
-      <div *ngIf="diaryEntry.diaryFoods?.length">
-        <h4>Produkty:</h4>
-        <table mat-table [dataSource]="diaryEntry.diaryFoods" class="mat-elevation-z8">
+    <h4>Produkty:</h4>
+<table mat-table [dataSource]="getAllFoods(diariesWithFoods)" class="mat-elevation-z8 fixed-table">
 
-          <ng-container matColumnDef="foodName">
-            <th mat-header-cell *matHeaderCellDef> Produkt </th>
-            <td mat-cell *matCellDef="let food"> {{ food.foodName }} </td>
-          </ng-container>
+  <ng-container matColumnDef="foodName">
+    <th mat-header-cell *matHeaderCellDef>Produkt</th>
+    <td mat-cell *matCellDef="let food">{{ food.foodName }}</td>
+  </ng-container>
 
-          <ng-container matColumnDef="weight">
-            <th mat-header-cell *matHeaderCellDef> Waga (g) </th>
-            <td mat-cell *matCellDef="let food"> {{ food.weight }} </td>
-          </ng-container>
+  <ng-container matColumnDef="weight">
+    <th mat-header-cell *matHeaderCellDef>Waga (g)</th>
+    <td mat-cell *matCellDef="let food">{{ food.weight }}</td>
+  </ng-container>
 
-          <ng-container matColumnDef="calories">
-            <th mat-header-cell *matHeaderCellDef> Kalorie </th>
-            <td mat-cell *matCellDef="let food"> {{ food.calories }} </td>
-          </ng-container>
+  <ng-container matColumnDef="calories">
+    <th mat-header-cell *matHeaderCellDef>Kalorie</th>
+    <td mat-cell *matCellDef="let food">{{ food.calories }}</td>
+  </ng-container>
 
-          <ng-container matColumnDef="carbs">
-            <th mat-header-cell *matHeaderCellDef> Węglowodany </th>
-            <td mat-cell *matCellDef="let food"> {{ food.carbs }} </td>
-          </ng-container>
+  <ng-container matColumnDef="carbs">
+    <th mat-header-cell *matHeaderCellDef>Węglowodany</th>
+    <td mat-cell *matCellDef="let food">{{ food.carbs }}</td>
+  </ng-container>
 
-          <ng-container matColumnDef="proteins">
-            <th mat-header-cell *matHeaderCellDef> Białko </th>
-            <td mat-cell *matCellDef="let food"> {{ food.proteins }} </td>
-          </ng-container>
+  <ng-container matColumnDef="proteins">
+    <th mat-header-cell *matHeaderCellDef>Białko</th>
+    <td mat-cell *matCellDef="let food">{{ food.proteins }}</td>
+  </ng-container>
 
-          <ng-container matColumnDef="fats">
-            <th mat-header-cell *matHeaderCellDef> Tłuszcze </th>
-            <td mat-cell *matCellDef="let food"> {{ food.fats }} </td>
-          </ng-container>
+  <ng-container matColumnDef="fats">
+    <th mat-header-cell *matHeaderCellDef>Tłuszcze</th>
+    <td mat-cell *matCellDef="let food">{{ food.fats }}</td>
+  </ng-container>
 
-          <tr mat-header-row *matHeaderRowDef="['foodName', 'weight', 'calories', 'carbs', 'proteins', 'fats']"></tr>
-          <tr mat-row *matRowDef="let row; columns: ['foodName', 'weight', 'calories', 'carbs', 'proteins', 'fats']"></tr>
-
-        </table>
-        <div *ngFor="let food of diaryEntry.diaryFoods">
-          <button (click)="removeFood(diaryEntry.id, food.foodId)">Usuń {{ food.foodName }}</button>
-        </div>
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Akcje</th>
+    <td mat-cell *matCellDef="let food">
+      <div class="actions-wrapper">
+        <button class="edit-button" (click)="editFood(food)">
+  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+    <path d="M4 21h4.586l11.293-11.293a1 1 0 0 0 0-1.414l-2.172-2.172a1 1 0 0 0-1.414 0L5 17.586V21zM20.707 7.293a1 1 0 0 0 0-1.414l-2.586-2.586a1 1 0 0 0-1.414 0l-1.293 1.293 4 4 1.293-1.293z"/>
+  </svg>
+  Edytuj
+</button>
+        <button class="delete-button" (click)="removeFood(food.diaryId, food.foodId)">
+          <svg viewBox="0 0 24 24" width="18" height="18">
+            <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+          </svg>
+          Usuń
+        </button>
       </div>
+    </td>
+  </ng-container>
 
-      <div *ngIf="diaryEntry.diaryFluids?.length">
-        <h4>Płyny:</h4>
-        <ul>
-          <li *ngFor="let fluid of diaryEntry.diaryFluids">
-            {{ fluid.fluidName }} ({{ fluid.volume }} ml, {{ fluid.calories }} kcal)
-            <button (click)="removeFluid(diaryEntry.id, fluid.fluidId)">Usuń</button>
-          </li>
-        </ul>
+  <tr mat-header-row *matHeaderRowDef="['foodName', 'weight', 'calories', 'carbs', 'proteins', 'fats', 'actions']"></tr>
+  <tr mat-row *matRowDef="let row; columns: ['foodName', 'weight', 'calories', 'carbs', 'proteins', 'fats', 'actions']"></tr>
+</table>
+
+
+    <h4>Płyny:</h4>
+<table mat-table [dataSource]="getAllFluids(diariesWithFoods)" class="mat-elevation-z8 fixed-table">
+
+  <ng-container matColumnDef="fluidName">
+    <th mat-header-cell *matHeaderCellDef>Płyn</th>
+    <td mat-cell *matCellDef="let fluid">{{ fluid.fluidName }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="volume">
+    <th mat-header-cell *matHeaderCellDef>Ilość (ml)</th>
+    <td mat-cell *matCellDef="let fluid">{{ fluid.volume }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="calories">
+    <th mat-header-cell *matHeaderCellDef>Kalorie</th>
+    <td mat-cell *matCellDef="let fluid">{{ fluid.calories }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Akcje</th>
+    <td mat-cell *matCellDef="let fluid">
+      <div class="actions-wrapper">
+        <button class="edit-button" (click)="editFluid(fluid)">
+  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+    <path d="M4 21h4.586l11.293-11.293a1 1 0 0 0 0-1.414l-2.172-2.172a1 1 0 0 0-1.414 0L5 17.586V21zM20.707 7.293a1 1 0 0 0 0-1.414l-2.586-2.586a1 1 0 0 0-1.414 0l-1.293 1.293 4 4 1.293-1.293z"/>
+  </svg>
+  Edytuj
+</button>
+        <button class="delete-button" (click)="removeFluid(fluid.diaryId, fluid.fluidId)">
+          <svg viewBox="0 0 24 24" width="18" height="18">
+            <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+          </svg>
+          Usuń
+        </button>
       </div>
-
-    </div>
+    </td>
+  </ng-container>
+<tr mat-header-row *matHeaderRowDef="['fluidName', 'volume', 'calories', 'actions']"></tr>
+  <tr mat-row *matRowDef="let row; columns: ['fluidName', 'volume', 'calories', 'actions']"></tr>
+</table>
+<div class="total-calories">
+   <h4>Łączne kalorie dziennie: {{ getTotalCalories({ foods: getAllFoods(diariesWithFoods), fluids: getAllFluids(diariesWithFoods) }) }} kcal</h4>
+</div>
+    <button class="back-btn" routerLink="/">Powrót</button>
   </div>
-
-  <button class="back-btn" routerLink="/">Powrót</button>
 </div>

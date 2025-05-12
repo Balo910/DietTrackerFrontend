@@ -6,6 +6,5 @@ export interface Food {
   proteins: number;
   fats: number;
   carbs: number;
-  tags?: string[];
 }
 

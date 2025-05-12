@@ -1,30 +1,40 @@
+<h2 mat-dialog-title>Edytuj produkt</h2>
 <mat-dialog-content>
+  <form [formGroup]="editForm">
+    <mat-form-field appearance="fill">
+      <mat-label>Nazwa produktu</mat-label>
+      <input matInput formControlName="name" required>
+    </mat-form-field>
 
-<h2>{{ data.id ? 'Edytuj' : 'Dodaj' }} produkt</h2>
-<div class="form-group">
-  <label>Nazwa:</label>
-  <input [(ngModel)]="data.name" class="form-control">
-</div>
-<div class="nutrition-grid">
-  <div class="form-group">
-    <label>Kalorie (na 100 g):</label>
-    <input type="number" [(ngModel)]="data.calories" class="form-control">
-  </div>
-  <div class="form-group">
-    <label>Białko (na 100 g):</label>
-    <input type="number" [(ngModel)]="data.proteins" class="form-control">
-  </div>
-  <div class="form-group">
-    <label>Tłuszcz (na 100 g):</label>
-    <input type="number" [(ngModel)]="data.fats" class="form-control">
-  </div>
-  <div class="form-group">
-    <label>Węglowodany (na 100 g):</label>
-    <input type="number" [(ngModel)]="data.carbs" class="form-control">
-  </div>
-</div>
-<div class="dialog-actions">
-  <button (click)="save()" class="btn-save">Zapisz</button>
-  <button (click)="cancel()" class="btn-cancel">Anuluj</button>
-</div>
+    <mat-form-field appearance="fill">
+      <mat-label>Waga (g)</mat-label>
+      <input matInput type="number" formControlName="weight" required>
+    </mat-form-field>
+
+    <div class="nutrition-fields">
+      <mat-form-field appearance="fill">
+        <mat-label>Kalorie (na 100g)</mat-label>
+        <input matInput type="number" formControlName="calories" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Białko (g)</mat-label>
+        <input matInput type="number" formControlName="proteins" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Tłuszcze (g)</mat-label>
+        <input matInput type="number" formControlName="fats" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Węglowodany (g)</mat-label>
+        <input matInput type="number" formControlName="carbs" required>
+      </mat-form-field>
+    </div>
+  </form>
 </mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="cancel()">Anuluj</button>
+  <button mat-button color="primary" (click)="save()" [disabled]="!editForm.valid">Zapisz</button>
+</mat-dialog-actions>

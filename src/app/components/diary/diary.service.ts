@@ -2,6 +2,25 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+interface UpdateDiaryFoodRequest {
+  diaryId: number;
+  foodId: number;
+  weight: number;
+  name: string;
+  calories: number;
+  proteins: number;
+  fats: number;
+  carbs: number;
+}
+
+interface UpdateDiaryFluidRequest {
+  diaryId: number;
+  fluidId: number;
+  volume: number;
+  name: string;
+  calories: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -31,4 +50,38 @@ export class DiaryService {
   deleteDiaryFluid(diaryId: number, fluidId: number): Observable<void> {
     return this.http.delete<void>(`/api/diary/${diaryId}/fluid/${fluidId}`);
   }
+
+  updateDiaryFood(data: {
+  diaryId: number,
+  foodId: number,
+  weight: number,
+  name: string,
+  calories: number,
+  proteins: number,
+  fats: number,
+  carbs: number
+}): Observable<any> {
+  return this.http.put<any>(`/api/diary/${data.diaryId}/food/${data.foodId}`, {
+    weight: data.weight,
+    foodName: data.name,
+    calories: data.calories,
+    proteins: data.proteins,
+    fats: data.fats,
+    carbs: data.carbs
+  });
+}
+
+updateDiaryFluid(data: {
+  diaryId: number,
+  fluidId: number,
+  volume: number,
+  name: string,
+  calories: number
+}): Observable<any> {
+  return this.http.put<any>(`/api/diary/${data.diaryId}/fluid/${data.fluidId}`, {
+    volume: data.volume,
+    fluidName: data.name,
+    calories: data.calories
+  });
+}
 }

@@ -10,6 +10,8 @@ import { FluidService } from '../fluid/fluid.service';
 import { DiaryEntryDialogComponent } from './dialog-entry/dialog-entry-dialog.component';
 import { BehaviorSubject } from 'rxjs';
 import { MatTableModule } from '@angular/material/table';
+import { FoodEditDialogComponent } from '../food/dialog-food/food-edit-dialog.component';
+import { FluidEditDialogComponent } from '../fluid/dialog-fluid/fluid-edit-dialog.component';
 
 @Component({
   selector: 'app-diary',
@@ -154,4 +156,79 @@ export class DiaryComponent implements OnInit {
     return item.id;
   }
 
+  getAllFoods(diaries: any[]) {
+  return diaries.flatMap(d => d.diaryFoods?.map(f => ({ ...f, diaryId: d.id })) || []);
+}
+
+getAllFluids(diaries: any[]) {
+  return diaries.flatMap(d => d.diaryFluids?.map(f => ({ ...f, diaryId: d.id })) || []);
+}
+
+editFood(food: any): void {
+  const dialogRef = this.dialog.open(FoodEditDialogComponent, {
+    width: '600px',
+    data: {
+      id: food.foodId,
+      name: food.foodName,
+      weight: food.weight,
+      calories: food.calories,
+      proteins: food.proteins,
+      fats: food.fats,
+      carbs: food.carbs,
+      diaryId: food.diaryId
+    }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.diaryService.updateDiaryFood({
+        diaryId: food.diaryId,
+        foodId: food.foodId,
+        weight: result.weight,
+        name: result.name,
+        calories: result.calories,
+        proteins: result.proteins,
+        fats: result.fats,
+        carbs: result.carbs
+      }).subscribe({
+        next: () => this.loadDiaries(),
+        error: (err) => console.error('Error updating food:', err)
+      });
+    }
+  });
+}
+
+editFluid(fluid: any): void {
+  const dialogRef = this.dialog.open(FluidEditDialogComponent, {
+    width: '600px',
+    data: {
+      id: fluid.fluidId,
+      name: fluid.fluidName,
+      volume: fluid.volume,
+      calories: fluid.calories,
+      diaryId: fluid.diaryId
+    }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.diaryService.updateDiaryFluid({
+        diaryId: fluid.diaryId,
+        fluidId: fluid.fluidId,
+        volume: result.volume,
+        name: result.name,
+        calories: result.calories
+      }).subscribe({
+        next: () => this.loadDiaries(),
+        error: (err) => console.error('Error updating fluid:', err)
+      });
+    }
+  });
+}
+
+ getTotalCalories({ foods, fluids }: { foods: any[], fluids: any[] }): number {
+   const totalFoodCalories = foods.reduce((acc: number, food: any) => acc + (food.calories || 0), 0);
+   const totalFluidCalories = fluids.reduce((acc: number, fluid: any) => acc + (fluid.calories || 0), 0);
+   return totalFoodCalories + totalFluidCalories;
+}
 }
