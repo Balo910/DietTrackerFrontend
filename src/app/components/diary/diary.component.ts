@@ -57,7 +57,12 @@ loadDiaries(): void {
 
       this.givenDayDiary$.next(filteredDiaries);
       const firstDiary = filteredDiaries[0];
-      this.calorieGoal = firstDiary?.calorieGoal ?? 0;
+      if (firstDiary?.calorieGoal) {
+        this.calorieGoal = firstDiary.calorieGoal;
+      } else {
+        const storedGoal = localStorage.getItem('calorieGoal');
+        this.calorieGoal = storedGoal ? +storedGoal : 0;
+      }
 
       this.isLoading = false;
     },
@@ -68,8 +73,6 @@ loadDiaries(): void {
   });
 }
 
-
-  
 
   private formatDate(date: Date): string {
     const year = date.getFullYear();

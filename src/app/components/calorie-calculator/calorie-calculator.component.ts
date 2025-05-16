@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -11,19 +11,20 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './calorie-calculator.component.html',
   styleUrls: ['./calorie-calculator.component.scss']
 })
-export class CalorieCalculatorComponent {
+export class CalorieCalculatorComponent implements OnInit {
 
-  private http = inject(HttpClient);
+  constructor(private http: HttpClient) {}
 
-  weight = 70;
-  height = 175;
-  age = 25;
+  diaryId: number = 1;
+  weight: number = 70;
+  height: number = 175;
+  age: number = 25;
   gender: 'male' | 'female' = 'male';
-  activityLevel = 'umiarkowana';
+  activityLevel: string = 'umiarkowana';
   goal: 'lose' | 'maintain' | 'gain' = 'maintain';
   calories: number | null = null;
   bmi: number | null = null;
-  interpretation = '';
+  interpretation: string = '';
 
   activityFactors: { [key: string]: number } = {
     'bardzo niska': 1.2,
@@ -32,6 +33,10 @@ export class CalorieCalculatorComponent {
     'aktywny tryb życia': 1.725,
     'bardzo aktywny tryb życia': 1.9
   };
+
+  ngOnInit(): void {
+  this.loadSavedCalorieGoal();
+}
 
   isValidAge(): boolean {
     return this.age > 0 && this.age <= 123;
@@ -68,18 +73,34 @@ export class CalorieCalculatorComponent {
     else this.interpretation = 'Otyłość III stopnia';
   }
 
-calculateCalories(): void {
-  let bmr: number = this.gender === 'male'
-    ? 10 * this.weight + 6.25 * this.height - 5 * this.age + 5
-    : 10 * this.weight + 6.25 * this.height - 5 * this.age - 161;
+  calculateCalories(): void {
+    let bmr: number = this.gender === 'male'
+      ? 10 * this.weight + 6.25 * this.height - 5 * this.age + 5
+      : 10 * this.weight + 6.25 * this.height - 5 * this.age - 161;
 
-  const activityFactor = this.activityFactors[this.activityLevel];
-  let tdee = bmr * activityFactor;
+    const activityFactor = this.activityFactors[this.activityLevel];
+    let tdee = bmr * activityFactor;
 
-  if (this.goal === 'lose') tdee *= 0.85;
-  else if (this.goal === 'gain') tdee *= 1.15;
+    if (this.goal === 'lose') tdee *= 0.85;
+    else if (this.goal === 'gain') tdee *= 1.15;
 
-  this.calories = Math.round(tdee);
+    this.calories = Math.round(tdee);
+     this.saveGoalToDiary();
+  }
+
+  saveGoalToDiary(): void {
+  if (!this.calories) return;
+
+  localStorage.setItem('calorieGoal', String(this.calories));
+  alert('✅ Cel kaloryczny zapisany!');
 }
+
+loadSavedCalorieGoal(): void {
+  const savedGoal = localStorage.getItem('calorieGoal');
+  if (savedGoal) {
+    this.calories = +savedGoal;
+  }
 }
   
+}
+

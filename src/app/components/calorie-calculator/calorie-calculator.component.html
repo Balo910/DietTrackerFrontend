@@ -63,12 +63,11 @@
         </div>
         
         <div *ngIf="calories !== null" class="result-box">
-            <h3>Zapotrzebowanie kaloryczne: {{ calories }} kcal/dzień</h3>
-            <p *ngIf="goal === 'lose'">(Deficyt kaloryczny)</p>
-            <p *ngIf="goal === 'gain'">(Nadwyżka kaloryczna)</p>
-            <p *ngIf="goal === 'maintain'">(Utrzymanie wagi)</p>
-        </div>
-    </div>
+        <h3>Zapotrzebowanie kaloryczne: {{ calories }} kcal/dzień</h3>
+         <p *ngIf="goal === 'lose'">(Deficyt kaloryczny)</p>
+         <p *ngIf="goal === 'gain'">(Nadwyżka kaloryczna)</p>
+         <p *ngIf="goal === 'maintain'">(Utrzymanie wagi)</p>
 
+        </div>
     <button class="back-btn" routerLink="/home">Powrót</button>
 </div>
