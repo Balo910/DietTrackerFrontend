@@ -22,6 +22,8 @@
     Dodaj nowy wpis
   </button>
 
+  
+
   <div *ngIf="(givenDayDiary$ | async) as diariesWithFoods">
 
     <h4>Produkty:</h4>
@@ -82,11 +84,11 @@
 </table>
 
 
-    <h4>Płyny:</h4>
+    <h4>Napoje:</h4>
 <table mat-table [dataSource]="getAllFluids(diariesWithFoods)" class="mat-elevation-z8 fixed-table">
 
   <ng-container matColumnDef="fluidName">
-    <th mat-header-cell *matHeaderCellDef>Płyn</th>
+    <th mat-header-cell *matHeaderCellDef>Napój</th>
     <td mat-cell *matCellDef="let fluid">{{ fluid.fluidName }}</td>
   </ng-container>
 
@@ -122,9 +124,20 @@
 <tr mat-header-row *matHeaderRowDef="['fluidName', 'volume', 'calories', 'actions']"></tr>
   <tr mat-row *matRowDef="let row; columns: ['fluidName', 'volume', 'calories', 'actions']"></tr>
 </table>
-<div class="total-calories">
-   <h4>Łączne kalorie dziennie: {{ getTotalCalories({ foods: getAllFoods(diariesWithFoods), fluids: getAllFluids(diariesWithFoods) }) }} kcal</h4>
+<div *ngIf="(givenDayDiary$ | async) as diaries">
+  <div class="total-calories"
+       [ngClass]="getCalorieStatus(getTotalCalories({ foods: getAllFoods(diaries), fluids: getAllFluids(diaries) }), calorieGoal).class">
+    <h4>
+      Łączne kalorie dziennie:
+      {{ getTotalCalories({ foods: getAllFoods(diaries), fluids: getAllFluids(diaries) }) }}
+      kcal / {{ calorieGoal }} kcal
+    </h4>
+    <p>
+      {{ getCalorieStatus(getTotalCalories({ foods: getAllFoods(diaries), fluids: getAllFluids(diaries) }), calorieGoal).message }}
+    </p>
+  </div>
 </div>
+
     <button class="back-btn" routerLink="/">Powrót</button>
   </div>
 </div>

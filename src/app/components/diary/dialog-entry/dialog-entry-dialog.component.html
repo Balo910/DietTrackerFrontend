@@ -1,35 +1,59 @@
 <mat-dialog-content>
   <h2>Dodaj do {{ data.mealType }}</h2>
   <mat-tab-group>
+    
     <mat-tab label="Żywność">
       <div class="tab-content">
         <div class="food-details">
           <div class="form-group">
             <label>Waga (g):</label>
-            <input type="number" [(ngModel)]="selectedWeight" class="form-control" min="1" value="100">
+            <input type="number" [(ngModel)]="selectedWeight" class="form-control" min="1" />
           </div>
         </div>
-        <div *ngFor="let food of data.foods" class="item" (click)="selectItem('food', food)">
-          {{ food.name }} ({{ food.calories }} kcal/100g)
-        </div>
+
+        <mat-form-field class="search-input" appearance="outline">
+          <mat-label>Wyszukaj produkt</mat-label>
+          <input type="text"
+                 matInput
+                 [(ngModel)]="searchFoodText"
+                 [matAutocomplete]="autoFood" />
+          <mat-autocomplete #autoFood="matAutocomplete" (optionSelected)="onFoodSelected($event.option.value)">
+            <mat-option *ngFor="let food of filteredFoods" [value]="food">
+              {{ food.name }} ({{ food.calories }} kcal/100g)
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
       </div>
     </mat-tab>
-    <mat-tab label="Płyny">
+
+  
+    <mat-tab label="Napoje">
       <div class="tab-content">
         <div class="food-details">
           <div class="form-group">
             <label>Objętość (ml):</label>
-            <input type="number" [(ngModel)]="selectedWeight" class="form-control" min="1" value="100">
+            <input type="number" [(ngModel)]="selectedVolume" class="form-control" min="1" />
           </div>
         </div>
-        <div *ngFor="let fluid of data.fluids" class="item" (click)="selectItem('fluid', fluid)">
-          {{ fluid.name }} ({{ fluid.calories }} kcal/100ml)
-        </div>
+
+        <mat-form-field class="search-input" appearance="outline">
+          <mat-label>Wyszukaj napój</mat-label>
+          <input type="text"
+                 matInput
+                 [(ngModel)]="searchFluidText"
+                 [matAutocomplete]="autoFluid" />
+          <mat-autocomplete #autoFluid="matAutocomplete" (optionSelected)="onFluidSelected($event.option.value)">
+            <mat-option *ngFor="let fluid of filteredFluids" [value]="fluid">
+              {{ fluid.name }} ({{ fluid.calories }} kcal/100ml)
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
       </div>
     </mat-tab>
+
   </mat-tab-group>
+
   <div class="actions">
     <button mat-button (click)="dialogRef.close()">Anuluj</button>
   </div>
-  </mat-dialog-content>
-`
+</mat-dialog-content>

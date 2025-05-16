@@ -40,29 +40,35 @@ export class DiaryComponent implements OnInit {
       }
       this.loadDiaries();
       this.loadAvailableItems();
+      
     });
   }
 
-  loadDiaries(): void {
-    this.isLoading = true;
-    this.errorMessage = null;
-    const formattedDate = this.formatDate(this.currentDate);
-  
-    this.diaryService.getAllDiariesWithFoodsAndFluids().subscribe({
-      next: (diaries) => {
-        const filteredDiaries = diaries.filter(item => 
-          item.date && item.date.includes(formattedDate) &&
-          (item.diaryFoods.length > 0 || item.diaryFluids.length > 0) 
-        );
-        this.givenDayDiary$.next(filteredDiaries);
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.errorMessage = 'Błąd podczas ładowania dzienników';
-        this.isLoading = false;
-      }
-    });
-  }
+loadDiaries(): void {
+  this.isLoading = true;
+  this.errorMessage = null;
+  const formattedDate = this.formatDate(this.currentDate);
+
+  this.diaryService.getAllDiariesWithFoodsAndFluids().subscribe({
+    next: (diaries) => {
+      const filteredDiaries = diaries.filter(item =>
+        item.date && item.date.includes(formattedDate)
+      );
+
+      this.givenDayDiary$.next(filteredDiaries);
+      const firstDiary = filteredDiaries[0];
+      this.calorieGoal = firstDiary?.calorieGoal ?? 0;
+
+      this.isLoading = false;
+    },
+    error: () => {
+      this.errorMessage = 'Błąd podczas ładowania dzienników';
+      this.isLoading = false;
+    }
+  });
+}
+
+
   
 
   private formatDate(date: Date): string {
@@ -146,7 +152,7 @@ export class DiaryComponent implements OnInit {
   }
 
   removeFluid(diaryId: number, fluidId: number): void {
-    if (confirm('Czy na pewno usunąć ten płyn?')) {
+    if (confirm('Czy na pewno usunąć ten napój?')) {
       this.diaryService.deleteDiaryFluid(diaryId, fluidId)
         .subscribe(() => this.loadDiaries());
     }
@@ -231,4 +237,23 @@ editFluid(fluid: any): void {
    const totalFluidCalories = fluids.reduce((acc: number, fluid: any) => acc + (fluid.calories || 0), 0);
    return totalFoodCalories + totalFluidCalories;
 }
+
+calorieGoal: number = 0;
+
+getCalorieStatus(total: number, goal: number): { message: string, class: string } {
+  if (goal === 0) return { message: 'Brak ustawionego limitu kalorycznego', class: '' };
+
+  const percent = total / goal;
+
+  if (percent < 1) {
+    return { message: `Zostało: ${goal - total} kcal`, class: '' };
+  } else if (percent <= 1.05) {
+    return { message: '✅ Udało Ci się uzyskać minimalne zapotrzebowanie', class: 'ok' };
+  } else if (percent <= 1.15) {
+    return { message: `⚠️ Lekko przekroczono o ${total - goal} kcal`, class: 'warning' };
+  } else {
+    return { message: `❌ Przekroczono znacznie o ${total - goal} kcal`, class: 'danger' };
+  }
+}
+
 }

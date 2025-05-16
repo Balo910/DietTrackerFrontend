@@ -64,22 +64,22 @@ export class FluidComponent {
   addFluid(fluid: any) {
     this.fluidService.addFluid(fluid).subscribe({
       next: () => this.loadFluids(),
-      error: (err) => this.errorMessage = 'Błąd dodawania płynu'
+      error: (err) => this.errorMessage = 'Błąd dodawania napoju'
     });
   }
 
   updateFluid(fluid: any) {
     this.fluidService.updateFluid(fluid).subscribe({
       next: () => this.loadFluids(),
-      error: (err) => this.errorMessage = 'Błąd aktualizacji płynu'
+      error: (err) => this.errorMessage = 'Błąd aktualizacji napoju'
     });
   }
 
   deleteFluid(id: number) {
-    if (confirm('Czy na pewno chcesz usunąć ten płyn?')) {
+    if (confirm('Czy na pewno chcesz usunąć ten napój?')) {
       this.fluidService.deleteFluid(id).subscribe({
         next: () => this.loadFluids(),
-        error: (err) => this.errorMessage = 'Błąd usuwania płynu'
+        error: (err) => this.errorMessage = 'Błąd usuwania napoju'
       });
     }
   }
