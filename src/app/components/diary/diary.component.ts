@@ -1,15 +1,14 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatTableModule } from '@angular/material/table';
+import { BehaviorSubject } from 'rxjs';
 import { DiaryService } from './diary.service';
 import { FoodService } from '../food/food.service';
 import { FluidService } from '../fluid/fluid.service';
 import { DiaryEntryDialogComponent } from './dialog-entry/dialog-entry-dialog.component';
-import { BehaviorSubject } from 'rxjs';
-import { MatTableModule } from '@angular/material/table';
 import { FoodEditDialogComponent } from '../food/dialog-food/food-edit-dialog.component';
 import { FluidEditDialogComponent } from '../fluid/dialog-fluid/fluid-edit-dialog.component';
 

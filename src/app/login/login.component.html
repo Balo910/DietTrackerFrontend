@@ -1,0 +1,9 @@
+<div class="login-container">
+    <form (ngSubmit)="login()">
+        <input #usernameInput type="text" placeholder="Nazwa użytkownika" required>
+        <input #passwordInput type="password" placeholder="Hasło" required>
+        <button type="submit">Zaloguj</button>
+    </form>
+    <p *ngIf="errorMessage">{{ errorMessage }}</p>
+    <p>Nie masz konta? <a [routerLink]="['/signup']">Zarejestruj się</a></p>
+</div>

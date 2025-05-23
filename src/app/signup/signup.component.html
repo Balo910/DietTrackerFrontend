@@ -1,0 +1,11 @@
+<div class="signup-container">
+    <form (ngSubmit)="register()">
+        <input #usernameInput type="text" placeholder="Nazwa użytkownika" required>
+        <input #passwordInput type="password" placeholder="Hasło" required>
+        <input #confirmPasswordInput type="password" placeholder="Potwierdź hasło" required>
+        <button type="submit">Zarejestruj</button>
+    </form>
+    <p *ngIf="errorMessage">{{ errorMessage }}</p>
+    <p *ngIf="successMessage">{{ successMessage }}</p>
+    <p>Masz już konto? <a [routerLink]="['/login']">Zaloguj się</a></p>
+</div>

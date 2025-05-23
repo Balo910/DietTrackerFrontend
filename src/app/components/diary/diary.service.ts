@@ -1,26 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-interface UpdateDiaryFoodRequest {
-  diaryId: number;
-  foodId: number;
-  weight: number;
-  name: string;
-  calories: number;
-  proteins: number;
-  fats: number;
-  carbs: number;
-}
-
-interface UpdateDiaryFluidRequest {
-  diaryId: number;
-  fluidId: number;
-  volume: number;
-  name: string;
-  calories: number;
-}
-
+import { ApiService } from '../../api-service/api.service';
+import { HttpClient } from '@angular/common/http';
 @Injectable({
   providedIn: 'root'
 })
