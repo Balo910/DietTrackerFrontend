@@ -9,49 +9,54 @@ import { NgModule } from '@angular/core';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { AuthGuard } from './auth/auth.guard';
+import { StartRedirectComponent } from './start/start-redirect.component';
+import { StartPageComponent } from './start/start-page.component';
 
 export const routes: Routes = [
-  { 
-    path: '', 
-    redirectTo: 'login', 
-    pathMatch: 'full' 
+  {
+    path: '',
+    component: StartRedirectComponent
   },
-  { 
-    path: 'login', 
-    component: LoginComponent 
+  {
+    path: 'login',
+    component: LoginComponent
   },
-  { 
-    path: 'signup', 
-    component: SignupComponent 
+  {
+    path: 'signup',
+    component: SignupComponent
   },
-  { 
-    path: 'home', 
+  {
+    path: 'home',
     component: HomeComponent,
-    canActivate: [AuthGuard] 
+    canActivate: [AuthGuard]
   },
-  { 
-    path: 'diary', 
+  {
+    path: 'diary',
     component: DiaryComponent,
-    canActivate: [AuthGuard] 
+    canActivate: [AuthGuard]
   },
-  { 
-    path: 'fluid', 
+  {
+    path: 'fluid',
     component: FluidComponent,
-    canActivate: [AuthGuard] 
+    canActivate: [AuthGuard]
   },
-  { 
-    path: 'food', 
+  {
+    path: 'food',
     component: FoodComponent,
-    canActivate: [AuthGuard] 
+    canActivate: [AuthGuard]
   },
-  { 
-    path: 'calories', 
+  {
+    path: 'calories',
     component: CalorieCalculatorComponent,
-    canActivate: [AuthGuard] 
+    canActivate: [AuthGuard]
   },
-  { 
-    path: '**', 
-    redirectTo: 'login' 
+  {
+  path: 'start',
+  component: StartPageComponent,
+},
+  {
+    path: '**',
+    redirectTo: '' 
   }
 ];
 

@@ -5,12 +5,13 @@ import { routes } from './app/app.routes';
 import { provideHttpClient } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { AuthGuard } from './app/auth/auth.guard';
+import { AuthInterceptor } from './app/auth/auth.interceptor';
 
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),
     provideHttpClient(),
     provideAnimations(),
-    AuthGuard
+    AuthGuard, AuthInterceptor
   ]
 }).catch(err => console.error(err));

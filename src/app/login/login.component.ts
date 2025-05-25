@@ -62,10 +62,14 @@ export class LoginComponent implements AfterViewInit {
   }
 
   private handleLoginSuccess(response: LoginResponse): void {
-    localStorage.setItem('token', response.token);
-    this.errorMessage = '';
-    this.router.navigate(['/home']);
-  }
+  localStorage.setItem('token', response.token);
+  const expiresAt = Date.now() + 60 * 60 * 1000;
+  localStorage.setItem('token_expires', expiresAt.toString());
+
+  this.errorMessage = '';
+  this.router.navigate(['/home']);
+}
+
 
   private handleLoginError(error: HttpErrorResponse): void {
     console.log('Login error:', error);
