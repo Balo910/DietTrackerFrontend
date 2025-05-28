@@ -1,6 +1,16 @@
-<div class="home-container">
-  <button class="theme-toggle" (click)="toggleTheme()">{{ themeText }}</button>
+<nav class="navbar">
+  <div class="navbar-brand">
+    <a routerLink="/home" class="logo">DietTracker</a>
+  </div>
+  <div class="navbar-controls">
+    <button class="nav-button small" (click)="toggleTheme()">{{ themeText }}</button>
+    <button class="nav-button small" (click)="handleAuth()">
+      {{ isLoggedIn ? 'Wyloguj' : 'Zaloguj się' }}
+    </button>
+  </div>
+</nav>
 
+<div class="home-container">
   <h1>DietTracker</h1>
   <p>Śledź swoje posiłki</p>
 

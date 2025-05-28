@@ -1,8 +1,14 @@
-import { Component, ElementRef, ViewChild, Renderer2, AfterViewInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 
 interface LoginResponse {
   token: string;
@@ -13,12 +19,12 @@ interface LoginResponse {
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements AfterViewInit {
   @ViewChild('usernameInput') usernameInput!: ElementRef<HTMLInputElement>;
   @ViewChild('passwordInput') passwordInput!: ElementRef<HTMLInputElement>;
-  
+
   errorMessage: string = '';
 
   constructor(
@@ -53,35 +59,41 @@ export class LoginComponent implements AfterViewInit {
   private attemptLogin(username: string, password: string): void {
     const loginData = { username, password };
     console.log('Sending login request:', loginData);
-    this.http.post<LoginResponse>('http://localhost:8080/req/login', loginData, {
-      headers: { 'Content-Type': 'application/json' }
-    }).subscribe({
-      next: (response) => this.handleLoginSuccess(response),
-      error: (err: HttpErrorResponse) => this.handleLoginError(err)
-    });
+    this.http
+      .post<LoginResponse>('http://localhost:8080/req/login', loginData, {
+        headers: { 'Content-Type': 'application/json' },
+      })
+      .subscribe({
+        next: (response) => this.handleLoginSuccess(response),
+        error: (err: HttpErrorResponse) => this.handleLoginError(err),
+      });
   }
 
   private handleLoginSuccess(response: LoginResponse): void {
-  localStorage.setItem('token', response.token);
-  const expiresAt = Date.now() + 60 * 60 * 1000;
-  localStorage.setItem('token_expires', expiresAt.toString());
+    console.log('response', response);
+    localStorage.setItem('token', response.token);
+    const expiresAt = Date.now() + 60 * 60 * 1000;
+    localStorage.setItem('token_expires', expiresAt.toString());
 
-  this.errorMessage = '';
-  this.router.navigate(['/home']);
-}
-
+    this.errorMessage = '';
+    this.router.navigate(['/home']);
+  }
 
   private handleLoginError(error: HttpErrorResponse): void {
     console.log('Login error:', error);
-    this.errorMessage = error.error || 
-                        (error.status === 401 ? 'Nieprawidłowe dane logowania' : 
-                        error.status === 403 ? 'Dostęp zabroniony' : 
-                        'Błąd połączenia z serwerem');
+    this.errorMessage =
+      error.error ||
+      (error.status === 401
+        ? 'Nieprawidłowe dane logowania'
+        : error.status === 403
+        ? 'Dostęp zabroniony'
+        : 'Błąd połączenia z serwerem');
     this.shakeContainer();
   }
 
   private fadeInContainer(): void {
-    const container = this.elRef.nativeElement.querySelector('.login-container');
+    const container =
+      this.elRef.nativeElement.querySelector('.login-container');
     if (container) {
       this.renderer.setStyle(container, 'opacity', '0');
       setTimeout(() => {
@@ -92,7 +104,8 @@ export class LoginComponent implements AfterViewInit {
   }
 
   private shakeContainer(): void {
-    const container = this.elRef.nativeElement.querySelector('.login-container');
+    const container =
+      this.elRef.nativeElement.querySelector('.login-container');
     if (container) {
       this.renderer.addClass(container, 'shake');
       setTimeout(() => this.renderer.removeClass(container, 'shake'), 500);

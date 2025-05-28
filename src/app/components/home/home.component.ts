@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -11,6 +12,8 @@ import { RouterModule } from '@angular/router';
 })
 export class HomeComponent {
   themeText = 'Ustaw ciemny motyw 🌑';
+
+  constructor(private router: Router) {}
 
   toggleTheme() {
     const currentTheme = document.documentElement.getAttribute('data-theme');
@@ -29,4 +32,18 @@ export class HomeComponent {
   private setThemeText(theme: string) {
     this.themeText = theme === 'dark' ? 'Ustaw jasny motyw ☀️' : 'Ustaw ciemny motyw 🌑';
   }
+
+    get isLoggedIn(): boolean {
+    return !!localStorage.getItem('token');
+  }
+
+  handleAuth(): void {
+    if (this.isLoggedIn) {
+      localStorage.removeItem('token');
+      this.router.navigate(['/login']);
+    } else {
+      this.router.navigate(['/login']);
+    }
+  }
 }
+
