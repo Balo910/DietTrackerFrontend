@@ -43,6 +43,7 @@ export class FoodEditDialogComponent {
  save() {
   if (this.editForm.valid) {
     this.dialogRef.close({
+      id: this.data.id,
       name: this.editForm.value.name,
       weight: this.editForm.value.weight,
       calories: this.editForm.value.calories,
