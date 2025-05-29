@@ -1,59 +1,58 @@
-# DietTrackerFrontend
+DietTracker
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.1.8.
+Aplikacja DietTracker została stworzona przez Przemysława Naja w ramach projektu realizowanego w technologii Java + Angular + Spring Boot.
 
-## Development server
+###########################################################################################################################################
 
-To start a local development server, run:
+UŻYTE TECHNOLOGIE I WERSJE
 
-```bash
-ng serve
-```
+Java: 17
+Node.js: 18.19.1
+npm: 10.2.4
+Maven: 3.9.9
+Angular CLI: npm install -g @angular/cli
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+###########################################################################################################################################
 
-## Code scaffolding
+URUCHAMIANIE APLIKACJI 
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Aby uruchomić aplikację lokalnie, należy:
 
-```bash
-ng generate component component-name
-```
+W backendzie:
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+1. Otworzyć projekt DietTrackerBackend w IntelliJ IDEA. 
 
-```bash
-ng generate --help
-```
+2. W pliku DietTrackerApplication.java kliknąć zielony przycisk Run.
 
-## Building
+W frontendzie:
 
-To build the project run:
+4. Otworzyć projekt DietTrackerFrontend w VS Code.
 
-```bash
-ng build
-```
+5. W pliku package.json kliknąć opcję Start przy skrypcie ng serve lub uruchomić frontend komendą ng serve albo npm run start w terminalu.
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Aplikacja będzie działała pod adresem: http://localhost:4200
 
-## Running unit tests
+###########################################################################################################################################
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+DZIAŁANE APLIKACJI
 
-```bash
-ng test
-```
+Logowanie i rejestracja: Użytkownik może się zarejestrować, a następnie zalogować, aby uzyskać dostęp do funkcjonalności aplikacji.
 
-## Running end-to-end tests
+Tryb jasny/ciemny: Na stronie głównej użytkownik ma możliwość zmiany motywu aplikacji (ciemny/jasny).
 
-For end-to-end (e2e) testing, run:
+Moduły żywności i napojów: Użytkownik może przeglądać bazę produktów i napojów.
+			   Każdy wpis można edytować, usunąć lub dodać nowy.
 
-```bash
-ng e2e
-```
+Kalkulator zapotrzebowania kalorycznego: Po wpisaniu podstawowych danych aplikacja oblicza BMI oraz dzienne zapotrzebowanie kaloryczne.
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Dziennik spożycia: Można dodawać wpisy dzienne składąjące się z żywności i napojów.
+		   Wpisy można edytować lub usuwać.
+		   Aplikacja pokazuje całkowitą liczbę spożytych kalorii w danym dniu i porównuje ją z obliczonym celem z kalkulatora.
+		   Możliwe jest uzupełnianie danych również dla dni wcześniejszych.
 
-## Additional Resources
+Konta użytkowników: Każdy użytkownik ma swój indywidualny dziennik.
+		    Po przelogowaniu się na inne konto dziennik będzie pusty, ponieważ dane są przypisane do konkretnego konta.
+		    Na stronie głównej jest możliwość wylogowania się.
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Po uruchomieniu backendu dostępna jest dokumentacja API stworzona z wykorzystaniem Swaggera: http://localhost:8080/swagger-ui/index.html
+
