@@ -47,16 +47,18 @@ export class DiaryEntryDialogComponent {
     }
   }
 
-
 ngOnInit() {
-  this.filteredFoods = this.data.foods;
-  this.filteredFluids = this.data.fluids;
+  this.filteredFoods = [...this.data.foods];
+  this.filteredFluids = [...this.data.fluids];
 }
 
-ngDoCheck() {
+filterFoods() {
   this.filteredFoods = this.data.foods.filter(food =>
     food.name.toLowerCase().includes((this.searchFoodText || '').toLowerCase())
   );
+}
+
+filterFluids() {
   this.filteredFluids = this.data.fluids.filter(fluid =>
     fluid.name.toLowerCase().includes((this.searchFluidText || '').toLowerCase())
   );

@@ -28,7 +28,9 @@ W frontendzie:
 
 4. Otworzyć projekt DietTrackerFrontend w VS Code.
 
-5. W pliku package.json kliknąć opcję Start przy skrypcie ng serve lub uruchomić frontend komendą ng serve albo npm run start w terminalu.
+5. Aby zainstalować wszystkie zależności, należy wpisać w terminalu komendę: npm install
+
+6. W pliku package.json kliknąć opcję Start przy skrypcie ng serve lub uruchomić frontend komendą ng serve albo npm run start w terminalu.
 
 Aplikacja będzie działała pod adresem: http://localhost:4200
 
